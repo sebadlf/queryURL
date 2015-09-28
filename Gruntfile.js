@@ -12,6 +12,8 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-ngmin');
 	grunt.loadNpmTasks('grunt-html2js');
+
+	grunt.loadNpmTasks('grunt-contrib-connect');
 	// grunt.loadNpmTasks('grunt-karma');
 
 	/**
@@ -185,10 +187,56 @@ module.exports = function ( grunt ) {
 					'<%= build_dir %>/assets/app.css': '<%= app_files.sass %>'
 				},
 				options: {
-					outputStyle: 'compact'
+					outputStyle: 'compressed'
 				}
 			}
 		},
+
+	// Add vendor prefixed styles
+    autoprefixer: {
+      options: {
+        browsers: ['last 1 version']
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/styles/',
+          src: '{,*/}*.css',
+          dest: '.tmp/styles/'
+        }]
+      }
+    },
+
+
+	// The actual grunt server settings
+    connect: {
+      options: {
+        port: 9000,
+        // Change this to '0.0.0.0' to access the server from outside.
+        hostname: 'localhost',
+        livereload: 35729
+      },
+      livereload: {
+		options: {
+             base: '<%= build_dir %>'
+         }
+      },
+      test: {
+        options: {
+          port: 9001,
+          base: [
+            '.tmp',
+            'test',
+            '<%= yeoman.app %>'
+          ]
+        }
+      },
+      dist: {
+        options: {
+          base: '<%= yeoman.dist %>'
+        }
+      }
+    },
 
 		/**
 		 * Defines JS linter rules, options, and files to check
@@ -385,7 +433,6 @@ module.exports = function ( grunt ) {
 	};
 
 	grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
-
 	/**
 	 * Ensures a clean build; compiles or copies only what was changed
 	 */
@@ -410,9 +457,9 @@ module.exports = function ( grunt ) {
 	 * Gets the app ready for deployment
 	 */
 	grunt.registerTask( 'compile', [
-		'sass:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'index:compile'
+		'sass:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
 	]);
-	/* 'uglify', 'ngmin'*/
+
 	/**
 	 * A utility function to get all app JS sources
 	 */
@@ -473,5 +520,21 @@ module.exports = function ( grunt ) {
 			}
 		});
 	});
+
+
+	grunt.registerTask('serve', function (target) {
+		if (target === 'dist') {
+			return grunt.task.run(['build', 'connect:dist:keepalive']);
+		}
+		grunt.task.run([
+			'connect:livereload',
+			'watch'
+			]);
+	});
+
+  grunt.registerTask('server', function () {
+    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
+    grunt.task.run(['serve']);
+  });
 
 };
