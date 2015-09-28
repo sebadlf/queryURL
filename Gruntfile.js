@@ -96,6 +96,16 @@ module.exports = function ( grunt ) {
 					}
 				]
 			},
+			build_testjson: {
+				files: [
+					{
+						src: [ '**' ],
+						dest: '<%= build_dir %>/',
+						cwd: '.',
+						expand: true
+					}
+				]
+			},
 			compile_assets: {
 				files: [
 					{
@@ -449,7 +459,7 @@ module.exports = function ( grunt ) {
 	 */
 	grunt.registerTask( 'build', [
 		'clean', 'html2js', 'jshint', 'sass:build', 'concat:build_css', 'copy:build_app_assets',
-		'copy:build_vendor_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'index:build'
+		'copy:build_vendor_assets', 'copy:build_appjs', 'copy:build_vendorjs','copy:build_testjson', 'index:build'
 		// 'karmaconfig', 'karma:continuous'
 	]);
 

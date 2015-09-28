@@ -46,8 +46,8 @@ angular.module('emc_service_providers', [
 .run(function() {
 
 })
-.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope',
-	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope) {
+.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope','MockSrvApi',
+	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope, MockSrvApi) {
 
 
 
@@ -986,8 +986,13 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 	function refresh(){
-	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
-	$scope.data.$promise.then(function() {
+	
+	/****** CHANGE THE SOURCE: mock or real BE  ********/
+	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
+	//$scope.data.$promise.then(function(response) {
+	MockSrvApi.getBlueLevelBE().then(function(response) {
+		$scope.data = response;
+		
 		$scope.data.is_cpc = false;
 		var search         = window.location.search;
 		var params         = {};

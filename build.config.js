@@ -59,6 +59,8 @@ module.exports = {
 		],
 		css: [
 		],
+		json: [
+		],
 		assets: [
 			'vendor/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot',
 			'vendor/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.svg',
