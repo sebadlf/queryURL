@@ -2817,7 +2817,7 @@ button.close {
       text-transform: uppercase; }
       @media (min-width: 768px) {
         .app-header .app-title h1 {
-          font-size: 1.95em;
+          font-size: 1.75em;
           margin-top: 25px;
           font-family: "Architects Daughter"; } }
       @media (min-width: 1200px) {
@@ -2842,7 +2842,7 @@ button.close {
       margin-top: 20px; } }
   @media (min-width: 768px) and (max-width: 1199px) {
     .app-header .app-search {
-      width: 50%; } }
+      width: 41.6666666667%; } }
   @media (min-width: 768px) {
     .app-header .app-search .app-typeahead, .app-header .app-search .app-reset {
       position: relative;
@@ -2964,7 +2964,8 @@ button.close {
       padding-right: 3em;
       line-height: 1.2;
       background: none;
-      font-size: 1.15em; }
+      font-size: 1.15em;
+      font-family: "Architects Daughter"; }
     .app-header .app-title h2, .app-header .app-search .form-group label {
       font-weight: normal; }
     .app-header .app-search .form-group label {
