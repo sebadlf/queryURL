@@ -527,6 +527,7 @@ module.exports = function ( grunt ) {
 			return grunt.task.run(['build', 'connect:dist:keepalive']);
 		}
 		grunt.task.run([
+			'build',
 			'connect:livereload',
 			'watch'
 			]);
