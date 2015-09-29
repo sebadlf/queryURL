@@ -501,8 +501,8 @@
           "icon": "/img/icon/pro/37.png"
         }
       ],
-      "parent": "service_offering",
-      "parent_display": "service_offering",
+      "parent": null,
+      "parent_display": null,
       "has_children": false,
       "form_type": "select"
     },
