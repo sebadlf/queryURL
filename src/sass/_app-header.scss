@@ -12,6 +12,17 @@
 	@include container-fixed();
 }
 
+
+/**
+ * Search form in #headerTop, changed specifically for min-width: 979px since de component
+ * is imported in index.htm with a default style.
+ */
+#header #navigation_wrapper .searchFormWrapper {
+	@media (min-width: 979px) {
+		margin-right: 35px;
+	}
+}
+
 .app-nav {
 	@media (min-width: $screen-sm-min) {
 		background: url('#{$image-path}bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent;
