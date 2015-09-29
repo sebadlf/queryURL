@@ -180,10 +180,6 @@ angular.module('appFilters', [
 			return providers;
 		}
 
-		if (action === 'update') {
-			$scope.data.filtered.search = null;
-		}
-
 		$q.when().then(function() {
 			_(providers).forEach(function(provider) {
 				if (action === 'reset') {
