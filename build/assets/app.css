@@ -2741,6 +2741,14 @@ button.close {
   .app-header:after, .filters .filters-primary > div:first-child:after, .filters .filters-secondary > div:first-child:after, .filters .tab-pane:after {
     clear: both; }
 
+/**
+ * Search form in #headerTop, changed specifically for min-width: 979px since de component
+ * is imported in index.htm with a default style.
+ */
+@media (min-width: 979px) {
+  #header #navigation_wrapper .searchFormWrapper {
+    margin-right: 35px; } }
+
 @media (min-width: 768px) {
   .app-nav {
     background: url('/assets/img/bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent; } }
