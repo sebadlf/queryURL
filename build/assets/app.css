@@ -3943,10 +3943,12 @@ button.close {
         float: none; } }
     @media (min-width: 768px) {
       .providers .detail .contacts + div > p {
-        width: 33.3333333333%; } }
+        width: 33.3333333333%;
+        height: 10em; } }
     @media (min-width: 992px) {
       .providers .detail .contacts + div > p {
-        width: 25%; } }
+        width: 30.8333333333%;
+        height: 8em; } }
 .providers .detail .contact-title {
   font-weight: bold; }
 .providers .detail .services-resellers {
