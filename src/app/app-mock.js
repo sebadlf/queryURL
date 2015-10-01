@@ -25,25 +25,27 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q) {
   };
 
 
+  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
   function setEMCProduct(providers){
-
-    _(providers).forEach(function(provider, provider_index) {
-      //console.log(provider);
-      var emc_attributes = null;
-      var service_offering = provider.filters.service_offering;
-      for(var propertyName in service_offering) {
-         //console.log(service_offering[propertyName]);
-         var obj = service_offering[propertyName];
-         //console.log(obj[0]);
-         var attributes = obj[0];
-         for(var propertyName2 in attributes) {
-            if ( propertyName2 === 'emc_product'){
-               console.log(attributes[propertyName2]); //value of emc_product
-               provider.filters['emc_product'] = attributes[propertyName2];
-               break;
-            }
-         }
-      }
+    _(secondaryFilters).forEach(function(filter, filter_index) {
+      _(providers).forEach(function(provider, provider_index) {
+        //console.log(provider);
+        var emc_attributes = null;
+        var service_offering = provider.filters.service_offering;
+        for(var propertyName in service_offering) {
+           //console.log(service_offering[propertyName]);
+           var obj = service_offering[propertyName];
+           //console.log(obj[0]);
+           var attributes = obj[0];
+           for(var propertyName2 in attributes) {
+              if ( propertyName2 === filter){
+                 console.log(attributes[propertyName2]); //value of emc_product
+                 provider.filters[filter] = attributes[propertyName2];
+                 break;
+              }
+           }
+        }
+      });
     });
     return providers;
   }
