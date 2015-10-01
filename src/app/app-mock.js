@@ -26,6 +26,7 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q) {
 
 
   var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
+  //var secondaryFilters = ['emc_product'];
   function setEMCProduct(providers){
     _(secondaryFilters).forEach(function(filter, filter_index) {
       _(providers).forEach(function(provider, provider_index) {
@@ -40,7 +41,15 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q) {
            for(var propertyName2 in attributes) {
               if ( propertyName2 === filter){
                  console.log(attributes[propertyName2]); //value of emc_product
+                 if (provider.filters[filter] === undefined){ //initial first
                  provider.filters[filter] = attributes[propertyName2];
+                 }
+                 else{ //more than one filter 
+                   var obj2 = attributes[propertyName2];
+                   if (! _.contains(provider.filters[filter], obj2[0]) ){
+                        provider.filters[filter].push(obj2[0]);
+                   }
+                 }
                  break;
               }
            }
