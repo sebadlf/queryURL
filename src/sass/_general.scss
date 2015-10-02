@@ -94,3 +94,6 @@ main {
 		@include user-select(none);
 	}
 }
+
+//== IE Scroll Bars
+html{-ms-overflow-style: scrollbar;}
