@@ -22,15 +22,24 @@
 			</div>
 
 			<form class="app-search">
+
 				<div class="form-group has-feedback app-typeahead">
 					<label for="name" ng-click="toggleXSmall('search')">
 						{{data.selected.xs_search_open || data.labels.search.sm}}
 					</label>
 					<span ng-show="data.selected.xs_search_open">{{data.labels.search.sm}}</span>
-					<input name="name" class="form-control" type="text" ng-model="data.selected.search"
-						typeahead="p as p.name for p in data.providers | filter:{name:$viewValue}"
-						typeahead-on-select="confirmAction('single')" placeholder="{{data.labels.search.lg}}"
-						ng-class="{'is-empty': !data.selected.search}" />
+
+					<label class="placeholder-ie">
+						<div class="xs-max">
+							<span>{{data.labels.search.lg}}</span>
+						</div>
+						<input name="name" class="form-control" type="text" ng-model="data.selected.search"
+								typeahead="p as p.name for p in data.providers | filter:{name:$viewValue}"
+								typeahead-on-select="confirmAction('single')"
+								placeholder="{{data.labels.search.lg}}"
+								ng-class="{'is-empty': !data.selected.search}" />
+					</label>
+
 					<span class="glyphicon glyphicon-search form-control-feedback"></span>
 				</div>
 				<div class="form-group app-reset">

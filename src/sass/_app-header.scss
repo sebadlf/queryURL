@@ -159,7 +159,7 @@
 			.app-reset {
 				width: percentage(2 / $grid-columns);
 			}
-			label {
+			label:not(.placeholder-ie) {
 				@include sr-only;
 
 				+ span {
@@ -251,7 +251,7 @@
 	@media (max-width: $screen-xs-max) {
 		.app-title h1,
 		.app-title h2,
-		.app-search .form-group label,
+		.app-search .form-group label:not(.placeholder-ie),
 		.app-search .form-group input,
 		.app-search .form-group .form-control-feedback,
 		.app-search .form-group .dropdown-menu,
@@ -261,7 +261,7 @@
 		}
 		.app-title h1,
 		.app-title h2,
-		.app-search .form-group label,
+		.app-search .form-group label:not(.placeholder-ie),
 		.xs-nav-open & .app-search .form-group button {
 			position: relative;
 			width: 100%;
@@ -295,22 +295,22 @@
 			font-family: "Architects Daughter";
 		}
 		.app-title h2,
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			font-weight: normal;
 		}
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			text-transform: uppercase;
 		}
 		.app-title h1,
 		.app-title h2,
 		.app-search .form-group,
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			margin: 0;
 		}
 		.xs-nav-open & .app-title h2,
-		.xs-nav-open & .app-search .form-group label,
+		.xs-nav-open & .app-search .form-group label:not(.placeholder-ie),
 		.xs-nav-open & .app-search .form-group button,
-		.xs-search-open & .app-search .form-group label,
+		.xs-search-open & .app-search .form-group label:not(.placeholder-ie),
 		.xs-search-open & .app-search .form-group button,
 		.xs-filters-open & .app-title h2,
 		.xs-filters-open & .app-search .form-group button {
@@ -318,7 +318,7 @@
 		}
 		.app-title h1:after,
 		.app-title h2:after,
-		.app-search .form-group label:after {
+		.app-search .form-group label:not(.placeholder-ie):after {
 			display: inline-block;
 			position: absolute;
 			right: 0;
@@ -388,7 +388,7 @@
 					top: 13px;
 					right: 20px;
 				}
-				label {
+				label:not(.placeholder-ie) {
 					padding: 20px 15px 20px 40px;
 					width: auto;
 					max-width: 0;
