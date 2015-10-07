@@ -1,0 +1,77 @@
+label.placeholder-ie {
+  width: 100%;
+  font-weight: normal;
+  display: inline;
+  margin: 0px;
+}
+
+.app-header .app-search label.placeholder-ie + span {
+  display: block;
+}
+
+.placeholder-ie {
+  .xs-max {
+    display: none;
+  }
+}
+
+.ie10 {
+
+  .placeholder-ie {
+    display: block;
+
+    .xs-max {
+      display: block;
+    }
+
+    input::-ms-clear {
+      display: none;
+    }
+  }
+
+  .placeholder-ie + span.glyphicon-search:before {
+    color: gray;
+  }
+
+  @media (max-width: 767px) {
+    .xs-search-open {
+      .app-search {
+        .placeholder-ie {
+          .xs-max span:first-child {
+            display: block;
+            top: 135px;
+            margin-left: 3%;
+          }
+        }
+      }
+    }
+  }
+
+  .placeholder-ie span {
+    position: absolute;
+    z-index: 1;
+    cursor: text;
+    pointer-events: none;
+    color: #999;
+    /* Input padding + input border */
+    padding: 9px;
+    padding-left: 7px;
+    /* Firefox does not respond well to different line heights. Use padding instead. */
+    line-height: 17px;
+    /* This gives a little gap between the cursor and the label */
+    margin-left: 2px;
+  }
+  .placeholder-ie input, .placeholder-ie textarea, .placeholder-ie select {
+    z-index: 0;
+    padding: 6px;
+    margin: 0;
+    font: inherit;
+    line-height: 17px;
+  }
+  .placeholder-ie select {
+    padding: 5px;
+    /* Unfortunately selects don't respond well to padding. They need an explicit height. */
+    height: 31px;
+  }
+
+}
