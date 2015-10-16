@@ -31,7 +31,7 @@
 
 					<label class="placeholder-ie">
 						<div class="xs-max">
-							<span>{{data.labels.search.lg}}</span>
+							<span>{{data.labels.search.lg | uppercase}}</span>
 						</div>
 						<input name="name" class="form-control" type="text" ng-model="data.selected.search"
 								typeahead="p as p.name for p in data.providers | filter:{name:$viewValue}"
