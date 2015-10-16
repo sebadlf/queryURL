@@ -63,10 +63,10 @@ if (isIE10) {
 		function removePlaceholder() {
 			if ($('.placeholder-ie input').attr('placeholder')){
 				$('.placeholder-ie input').removeAttr('placeholder');
-				console.log('not removed');
+				console.log('placeholder removed');
 			} else {
 				setTimeout(removePlaceholder, 100);
-				console.log('not loaded');
+				console.log('placeholder not loaded');
 			}
 		}
 
