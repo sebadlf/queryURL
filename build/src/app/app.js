@@ -124,9 +124,9 @@ angular.module('emc_service_providers', [
 
 	$scope.resetUrl = function () {
 		$location.search('');
-	};  
+	};
 /**************************************************************************************************/
-	
+
 
 	$scope.toggleReset = function() {
 		if ( ( _.isUndefined($scope.data.selected) || _.isEmpty($scope.data.selected.filters) ) &&
@@ -147,7 +147,7 @@ function parse(val) {
     var result = null,
         tmp = [];
     location.search
-    //.replace ( "?", "" ) 
+    //.replace ( "?", "" )
     // this is better, there might be a question mark inside
     .substr(1)
         .split("&")
@@ -163,10 +163,10 @@ function updateLocationURL(cascade_values,item,option){
 		$location.search(item.id, cascade_values.toString());
 	}
 	else
-	{   
+	{
 		if (!refreshPage){
 		if (item.form_type === 'checkbox'){
-		
+
 		if ( window.location.search.indexOf(item.id) > 0) //concatenate
 		{
 			var str = parse(item.id); // get values from url for a item.id
@@ -228,13 +228,13 @@ $scope.addFilter = function(filter, option) {
 		if (this.option.disabled) {
 			return;
 		}
-		
+
 
 		var selected   = $scope.data.selected;
 		var element_id = 'filter-' + this.item.id;
 		var cascade_values; //cascade values have the values por select in cascade
 
-		
+
 
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
@@ -246,7 +246,7 @@ $scope.addFilter = function(filter, option) {
 			$scope.resetActiveCheckbox(this.item.id, this.option.id);
 			return true;
 		}
-		
+
 
 		if (_.isNull(this.item.parent_display) && this.item.has_children) {
 			selected.filter_primary = this.item.id;
@@ -490,23 +490,38 @@ updateLocationURL(cascade_values,this.item,this.option);
 									if ( $scope.isXSmall() ) {
 										if ( _.isUndefined($scope.data.selected.xs_nav_open) ||
 											_.isNull($scope.data.selected.xs_nav_open) ) {
-											offset = -57 + item.parentElement.offsetTop - item.offsetHeight;
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										} else {
-											offset = -237 + item.parentElement.offsetTop - item.offsetHeight;
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										}
 									} else {
-										offset = -197 + item.parentElement.offsetTop - item.offsetHeight;
+
+										offset = -jQuery('#headerWrap').height() -
+												jQuery('.app-nav').height() -
+												jQuery('.filters-selected').height();
 									}
 								} else {
 									if ( $scope.isXSmall() ) {
 										if ( _.isUndefined($scope.data.selected.xs_nav_open) ||
 											_.isNull($scope.data.selected.xs_nav_open) ) {
-											offset = -120;
+
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										} else {
-											offset = -300;
+
+											offset = -jQuery('#headerWrap').height() -
+													jQuery('.app-nav').height();
+
 										}
+
 									} else {
-										offset = -235;
+
+										offset = -jQuery('header').height() -
+												(jQuery('.app-nav').height() - 6) -
+												jQuery('.filters-selected').height();
+
 									}
 								}
 
@@ -892,7 +907,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 // Author: Globant
 // Date: 02/07/2015
-// Init function declaration - This function is the responsible for load all the information from 
+// Init function declaration - This function is the responsible for load all the information from
 // cache when the user refresh the page or copy/paste the link into another page
 /**************************************************************************************************/
 var refreshPage = false;
@@ -941,7 +956,7 @@ function updateCheckboxSstatus(){
 					$location.search(filterObject.filter.id, filterObject.option[j].id);
 				}
 			}
-		}	
+		}
 	}
 }
 
@@ -955,13 +970,13 @@ var unregister = $scope.$watch('checkbox', function() {
 	if(!flagAddFilter){
 		updateCheckboxSstatus();
 		}
-	}, true); 
+	}, true);
 
 
 /**************************************************************************************************/
 // Author: Globant
 // Date: 21/07/2015
-// Unchecks the checkbox on Reset Filter button  
+// Unchecks the checkbox on Reset Filter button
 /**************************************************************************************************/
 
 function disableCheckMarks(filter_id){
@@ -986,13 +1001,13 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 	function refresh(){
-	
+
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	MockSrvApi.getBlueLevelBE().then(function(response) {
 		$scope.data = response;
-		
+
 		$scope.data.is_cpc = false;
 		var search         = window.location.search;
 		var params         = {};

@@ -180,7 +180,7 @@ angular.module('appFilters', [
 			return providers;
 		}
 
-		if (action === 'update') {
+		if ((action === 'update') && !_.isEmpty(selected.filters)) {
 			$scope.data.filtered.search = null;
 		}
 
@@ -272,7 +272,7 @@ angular.module('appFilters', [
 				counts.groups[0][index] = counts.groups[1][index] - filtered_count.groups[index];
 			});
 
-			if ( action === 'update' && !_.isNull(selected.filter_active) ) {
+			if ( (action === 'update' || action === 'reset') && !_.isNull(selected.filter_active) ) {
 				$scope.toggleOptions('update', $scope.data.filters[selected.filter_active.index].id);
 			} else if ( action === 'single' ) {
 				$scope.resetFilters('single');

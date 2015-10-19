@@ -26,15 +26,24 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "			</div>\n" +
     "\n" +
     "			<form class=\"app-search\">\n" +
+    "\n" +
     "				<div class=\"form-group has-feedback app-typeahead\">\n" +
     "					<label for=\"name\" ng-click=\"toggleXSmall('search')\">\n" +
     "						{{data.selected.xs_search_open || data.labels.search.sm}}\n" +
     "					</label>\n" +
     "					<span ng-show=\"data.selected.xs_search_open\">{{data.labels.search.sm}}</span>\n" +
-    "					<input name=\"name\" class=\"form-control\" type=\"text\" ng-model=\"data.selected.search\"\n" +
-    "						typeahead=\"p as p.name for p in data.providers | filter:{name:$viewValue}\"\n" +
-    "						typeahead-on-select=\"confirmAction('single')\" placeholder=\"{{data.labels.search.lg}}\"\n" +
-    "						ng-class=\"{'is-empty': !data.selected.search}\" />\n" +
+    "\n" +
+    "					<label class=\"placeholder-ie\">\n" +
+    "						<div class=\"xs-max\">\n" +
+    "							<span>{{data.labels.search.lg | uppercase}}</span>\n" +
+    "						</div>\n" +
+    "						<input name=\"name\" class=\"form-control\" type=\"text\" ng-model=\"data.selected.search\"\n" +
+    "								typeahead=\"p as p.name for p in data.providers | filter:{name:$viewValue}\"\n" +
+    "								typeahead-on-select=\"confirmAction('single')\"\n" +
+    "								placeholder=\"{{data.labels.search.lg}}\"\n" +
+    "								ng-class=\"{'is-empty': !data.selected.search}\" />\n" +
+    "					</label>\n" +
+    "\n" +
     "					<span class=\"glyphicon glyphicon-search form-control-feedback\"></span>\n" +
     "				</div>\n" +
     "				<div class=\"form-group app-reset\">\n" +
