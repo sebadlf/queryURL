@@ -463,7 +463,23 @@ updateLocationURL(cascade_values,this.item,this.option);
 		var sort_keys = [];
 
 		if (useDefaultOrder) {
-			sort_keys = ['-cloud_partner_connect', '+tier_id', '+name'];
+			sort_keys = ['-focus_partner', '+tier_id', '+name', '-cloud_partner_connect'];
+
+			$scope.data.filtered.main.map(function (provider) {
+
+				var result = !!_.find(provider.filters.service_offering.testdev, function(element){
+					var innerResult = !!_.find(element.focus_partner, function(value){
+
+						return value === 'yes' ? 1 : 0;
+					});
+
+					return innerResult;
+				});
+
+				provider.focus_partner = result ? 1 : 0;
+
+			});
+
 		} else {
 			_(column.sort_order).forEach(function(order, index) {
 				if ( !_.isNull(column.sort_keys[index]) ) {
