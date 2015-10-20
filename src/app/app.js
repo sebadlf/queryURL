@@ -61,13 +61,19 @@ angular.module('emc_service_providers', [
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
+		var useDefaultOrder;
+
 		if ( action === 'single' && !_.isNull($scope.data.filtered.search) ) {
 			if ($scope.data.selected.search.id === $scope.data.filtered.search.id) {
 				return;
 			}
+		} else if (action === 'defaultFilters') {
+			action = undefined;
+			useDefaultOrder = true;
 		}
+
 		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort();
+		$scope.applySort(useDefaultOrder);
 	};
 
 
@@ -451,15 +457,21 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
-	$scope.applySort = function() {
+	$scope.applySort = function(useDefaultOrder) {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
+
 		var sort_keys = [];
 
-		_(column.sort_order).forEach(function(order, index) {
-			if ( !_.isNull(column.sort_keys[index]) ) {
-				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
-			}
-		});
+		if (useDefaultOrder) {
+			sort_keys = ['-cloud_partner_connect', '+tier_id', '+name'];
+		} else {
+			_(column.sort_order).forEach(function(order, index) {
+				if ( !_.isNull(column.sort_keys[index]) ) {
+					sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
+				}
+			});
+		}
+
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
@@ -1049,7 +1061,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 		$scope.init().then(function(){
-			$scope.applyFilters();
+			$scope.applyFilters('defaultFilters');
 			$scope.setFilterCSS();
 			//updateCheckboxSstatus();
 		});
