@@ -73,9 +73,13 @@ angular.module('emc_service_providers', [
 		}
 
 		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort(useDefaultOrder);
-	};
 
+		if (useDefaultOrder){
+			$scope.applySortDefault();
+		} else {
+			$scope.applySort();
+		}
+	};
 
 	$scope.resetFilters = function(action, option_clicked) {
 		var selected             = $scope.data.selected;
@@ -457,36 +461,50 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
-	$scope.applySort = function(useDefaultOrder) {
+	$scope.applySort = function() {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
-
 		var sort_keys = [];
 
-		if (useDefaultOrder) {
-			sort_keys = ['-focus_partner', '+tier_id', '+name', '-cloud_partner_connect'];
+		_(column.sort_order).forEach(function(order, index) {
+			if ( !_.isNull(column.sort_keys[index]) ) {
+				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
+			}
+		});
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
 
-			$scope.data.filtered.main.map(function (provider) {
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/21/2015
+	// Looks for focus_partner === 'yes' inside of all service offering in order to find any abailable
+	// service with focus partner, then sort all the providers based on that parameter
+	/**************************************************************************************************/
+	$scope.applySortDefault = function() {
 
-				var result = !!_.find(provider.filters.service_offering.testdev, function(element){
-					var innerResult = !!_.find(element.focus_partner, function(value){
+		var sort_keys = ['-focus_partner', '+tier_id', '+name', '-cloud_partner_connect'];
 
-						return value === 'yes' ? 1 : 0;
+		$scope.data.filtered.main.map(function (provider) {
+
+			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+
+				var service_offering_array = provider.filters.service_offering[service_offering_key];
+
+				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+
+					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
+
+						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
 					});
 
-					return innerResult;
+					return focusPartnerYes;
 				});
 
-				provider.focus_partner = result ? 1 : 0;
-
+				return serviceHasFocusPartner;
 			});
 
-		} else {
-			_(column.sort_order).forEach(function(order, index) {
-				if ( !_.isNull(column.sort_keys[index]) ) {
-					sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
-				}
-			});
-		}
+			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+
+		});
 
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
