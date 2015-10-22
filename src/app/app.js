@@ -61,15 +61,25 @@ angular.module('emc_service_providers', [
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
+		var useDefaultOrder;
+
 		if ( action === 'single' && !_.isNull($scope.data.filtered.search) ) {
 			if ($scope.data.selected.search.id === $scope.data.filtered.search.id) {
 				return;
 			}
+		} else if (action === 'defaultFilters') {
+			action = undefined;
+			useDefaultOrder = true;
 		}
-		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort();
-	};
 
+		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
+
+		if (useDefaultOrder){
+			$scope.applySortDefault();
+		} else {
+			$scope.applySort();
+		}
+	};
 
 	$scope.resetFilters = function(action, option_clicked) {
 		var selected             = $scope.data.selected;
@@ -460,6 +470,42 @@ updateLocationURL(cascade_values,this.item,this.option);
 				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
 			}
 		});
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/21/2015
+	// Looks for focus_partner === 'yes' inside of all service offering in order to find any abailable
+	// service with focus partner, then sort all the providers based on that parameter
+	/**************************************************************************************************/
+	$scope.applySortDefault = function() {
+
+		var sort_keys = ['-focus_partner', '+tier_id', '+name', '-cloud_partner_connect'];
+
+		$scope.data.filtered.main.map(function (provider) {
+
+			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+
+				var service_offering_array = provider.filters.service_offering[service_offering_key];
+
+				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+
+					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
+
+						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
+					});
+
+					return focusPartnerYes;
+				});
+
+				return serviceHasFocusPartner;
+			});
+
+			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+
+		});
+
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
@@ -1049,7 +1095,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 		$scope.init().then(function(){
-			$scope.applyFilters();
+			$scope.applyFilters('defaultFilters');
 			$scope.setFilterCSS();
 			//updateCheckboxSstatus();
 		});
