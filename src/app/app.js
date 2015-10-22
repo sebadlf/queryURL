@@ -461,6 +461,11 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	/*************************************************************************************************
+	// Author: Globant
+	// Date: 10/22/2015
+	// Old sort stategy, it should be deleted
+
 	$scope.applySort = function() {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
 		var sort_keys = [];
@@ -472,6 +477,27 @@ updateLocationURL(cascade_values,this.item,this.option);
 		});
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
+	*************************************************************************************************/
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/22/2015
+	// Apply Sort specialiced on front en for every visible column
+	/**************************************************************************************************/
+	$scope.applySort = function() {
+		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
+		var sort_keys = [];
+
+		if (column.title === 'Cloud Service Provider Name') {
+			sort_keys = ['+name'];
+		} else if (column.title === 'Tier') {
+			sort_keys = ['+tier_id', '-focus_partner', '+name'];
+		} else if (column.title === 'Cloud Partner Connect') {
+			sort_keys = ['-cloud_partner_connect', '+tier_id', '-focus_partner', '+name'];
+		}
+
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
 
 	/**************************************************************************************************/
 	// Author: Globant
@@ -481,7 +507,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 	/**************************************************************************************************/
 	$scope.applySortDefault = function() {
 
-		var sort_keys = ['-focus_partner', '+name', '+tier_id', '-cloud_partner_connect'];
+		var sort_keys = ['+tier_id', '-focus_partner', '+name'];
 
 		$scope.data.filtered.main.map(function (provider) {
 
