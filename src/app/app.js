@@ -481,7 +481,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 	/**************************************************************************************************/
 	$scope.applySortDefault = function() {
 
-		var sort_keys = ['-focus_partner', '+tier_id', '+name', '-cloud_partner_connect'];
+		var sort_keys = ['-focus_partner', '+name', '+tier_id', '-cloud_partner_connect'];
 
 		$scope.data.filtered.main.map(function (provider) {
 
