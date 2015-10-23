@@ -3,6 +3,7 @@
  */
 angular.module('emc_service_providers', [
 	'ngRoute',
+	'mConfiguration',
 	'getResource',
 	'appFilters',
 	'angular-ui.dropdown',
@@ -1063,6 +1064,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 refresh();
 
+getResource.setEnvironment();
 
 }]);
 
