@@ -122,9 +122,22 @@ angular.module('emc_service_providers', [
 //Reset all filter from URL
 //Author: Globant
 //Date: 04/07/2015
-
+/**************************************************************************************************/
+//Update
+//Date: 10/24/2015
+//Reset url query string and restore environment parameter if it exists
+/**************************************************************************************************/
 	$scope.resetUrl = function () {
-		$location.search('');
+		var env = $location.search().env ? $location.search().env : null;
+
+		$location.search(''); //Clears URL's Filter Params queried
+
+		//Restore environment parameter
+		if (env){
+			$location.search({
+				env: env
+			});
+		}
 	};
 /**************************************************************************************************/
 
@@ -292,26 +305,6 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
-	/**************************************************************************************************/
-	//Update Location URL
-	//Author: Globant
-	//Date: 10/24/2015
-	// Reset url query string and restore environment parameter if it exists
-	/**************************************************************************************************/
-	function resetUrlQuerystring() {
-		var env = $location.search().env ? $location.search().env : null;
-
-		$location.search(''); //Clears URL's Filter Params queried
-
-		//Restore environment parameter
-		if (env){
-			$location.search({
-				env: env
-			});
-		}
-	}
-
-
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
 		var filters        = $scope.data.filters;
@@ -326,7 +319,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 			$scope.resetFilters('all');
 
 			//$location.search(''); //Clears URL's Filter Params queried
-			resetUrlQuerystring();
+			$scope.resetUrl();
 
 			return;
 		}
