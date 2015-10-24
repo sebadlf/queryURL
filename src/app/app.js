@@ -292,6 +292,25 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
+	/**************************************************************************************************/
+	//Update Location URL
+	//Author: Globant
+	//Date: 10/24/2015
+	// Reset url query string and restore environment parameter if it exists
+	/**************************************************************************************************/
+	function resetUrlQuerystring() {
+		var env = $location.search().env ? $location.search().env : null;
+
+		$location.search(''); //Clears URL's Filter Params queried
+
+		//Restore environment parameter
+		if (env){
+			$location.search({
+				env: env
+			});
+		}
+	}
+
 
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
@@ -305,7 +324,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 		if ( selected_count === 1 && _.isUndefined(option_id) ) {
 			$scope.resetFilters('all');
-			$location.search(''); //Clears URL's Filter Params queried
+
+			//$location.search(''); //Clears URL's Filter Params queried
+			resetUrlQuerystring();
 
 			return;
 		}
@@ -1064,7 +1085,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 refresh();
 
-getResource.setEnvironment();
+getResource.setEnvironment($location.search().env);
 
 }]);
 
