@@ -1112,10 +1112,14 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 
 	function refresh(){
 
+	var env = $location.search().env;
+
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
-	MockSrvApi.getBlueLevelBE().then(function(response) {
+	//getResource.setEnvironment(env);
+
+	MockSrvApi.getBlueLevelBE(env).then(function(response) {
 		$scope.data = response;
 
 		$scope.data.is_cpc = false;
@@ -1172,8 +1176,6 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
-
-getResource.setEnvironment($location.search().env);
 
 }]);
 

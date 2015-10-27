@@ -16,5 +16,15 @@ angular.module('mConfiguration', [])
         'url': 'https://cspdb.emc.com/Services/ServiceProviders.asmx'
       }
     ],
+    mock:[
+      {
+      'environment':'production',
+        'url': 'src/blue-level-response.json'
+      },
+      {
+      'environment':'dev1',
+        'url': 'src/blue-level-response2.json'
+      }
+    ],
     active: 'dev1'
   });
