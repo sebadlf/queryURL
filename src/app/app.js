@@ -47,7 +47,7 @@ angular.module('emc_service_providers', [
 .run(function() {
 
 })
-.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope','MockSrvApi',
+.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv', '$rootScope','MockSrvApi',
 	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope, MockSrvApi) {
 
 
@@ -455,6 +455,20 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	function forceRefreshOnSafari(element) {
+
+		if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1){
+			element.hideOnSafari = true;
+
+			$timeout(function() {
+				element.hideOnSafari = false;
+				$rootScope.$digest();
+			}, 10, false);
+		}
+
+	}
+
+
 	$scope.changeSort = function(index) {
 		var selected = $scope.data.labels.main.columns[index];
 		if ( !selected.sort_by && _.isNull($scope.data.filtered.search) ) {
@@ -463,6 +477,10 @@ updateLocationURL(cascade_values,this.item,this.option);
 			});
 			$scope.toggleDetail();
 			$scope.applySort();
+
+			var column = $scope.data.labels.main.columns[index];
+
+			forceRefreshOnSafari(column);
 		}
 	};
 
