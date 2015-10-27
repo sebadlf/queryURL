@@ -265,7 +265,8 @@
 			<thead class="providers-header">
 				<tr>
 					<th ng-repeat="column in data.labels.main.columns" class="providers-col-{{$index + 1}}"
-						ng-class="{'sort-by': column.sort_by}">
+						ng-class="{'sort-by': column.sort_by}"
+						ng-hide="column.hideOnSafari">
 						<a ng-click="changeSort($index)">{{column.title}} <span class="caret"></span></a>
 					</th>
 				</tr>

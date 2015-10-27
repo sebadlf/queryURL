@@ -450,6 +450,25 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/26/2015
+	// Force hide/show secuence on safary browser to ensure that ng-class is triggered on an element
+	/**************************************************************************************************/
+	function forceRefreshOnSafari(element) {
+
+		if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1){
+			element.hideOnSafari = true;
+
+			$timeout(function() {
+				element.hideOnSafari = false;
+				$rootScope.$digest();
+			}, 10, false);
+		}
+
+	}
+	/**************************************************************************************************/
+
 	$scope.changeSort = function(index) {
 		var selected = $scope.data.labels.main.columns[index];
 		if ( !selected.sort_by && _.isNull($scope.data.filtered.search) ) {
@@ -458,6 +477,10 @@ updateLocationURL(cascade_values,this.item,this.option);
 			});
 			$scope.toggleDetail();
 			$scope.applySort();
+
+			var column = $scope.data.labels.main.columns[index];
+
+			forceRefreshOnSafari(column);
 		}
 	};
 
