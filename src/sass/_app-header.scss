@@ -648,6 +648,11 @@
 			border-width: 6px;
 			color: $emc-gray-light;
 		}
+		@media (max-width: 320px) {
+			.caret {
+				margin-left: 0;
+			}
+		}
 	}
 	.btn-group.open {
 		.dropdown-title {
