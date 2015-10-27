@@ -62,15 +62,25 @@ angular.module('emc_service_providers', [
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
+		var useDefaultOrder;
+
 		if ( action === 'single' && !_.isNull($scope.data.filtered.search) ) {
 			if ($scope.data.selected.search.id === $scope.data.filtered.search.id) {
 				return;
 			}
+		} else if (action === 'defaultFilters') {
+			action = undefined;
+			useDefaultOrder = true;
 		}
-		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort();
-	};
 
+		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
+
+		if (useDefaultOrder){
+			$scope.applySortDefault();
+		} else {
+			$scope.applySort();
+		}
+	};
 
 	$scope.resetFilters = function(action, option_clicked) {
 		var selected             = $scope.data.selected;
@@ -455,6 +465,25 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/26/2015
+	// Force hide/show secuence on safary browser to ensure that ng-class is triggered on an element
+	/**************************************************************************************************/
+	function forceRefreshOnSafari(element) {
+
+		if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1){
+			element.hideOnSafari = true;
+
+			$timeout(function() {
+				element.hideOnSafari = false;
+				$rootScope.$digest();
+			}, 10, false);
+		}
+
+	}
+	/**************************************************************************************************/
+
 	$scope.changeSort = function(index) {
 		var selected = $scope.data.labels.main.columns[index];
 		if ( !selected.sort_by && _.isNull($scope.data.filtered.search) ) {
@@ -463,8 +492,17 @@ updateLocationURL(cascade_values,this.item,this.option);
 			});
 			$scope.toggleDetail();
 			$scope.applySort();
+
+			var column = $scope.data.labels.main.columns[index];
+
+			forceRefreshOnSafari(column);
 		}
 	};
+
+	/*************************************************************************************************
+	// Author: Globant
+	// Date: 10/22/2015
+	// Old sort stategy, it should be deleted
 
 	$scope.applySort = function() {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
@@ -475,6 +513,63 @@ updateLocationURL(cascade_values,this.item,this.option);
 				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
 			}
 		});
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+	*************************************************************************************************/
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/22/2015
+	// Apply Sort specialiced on front en for every visible column
+	/**************************************************************************************************/
+	$scope.applySort = function() {
+		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
+		var sort_keys = [];
+
+		if (column.title === 'Cloud Service Provider Name') {
+			sort_keys = ['+name'];
+		} else if (column.title === 'Tier') {
+			sort_keys = ['+tier_id', '-focus_partner', '+name'];
+		} else if (column.title === 'Cloud Partner Connect') {
+			sort_keys = ['-cloud_partner_connect', '+tier_id', '-focus_partner', '+name'];
+		}
+
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/21/2015
+	// Looks for focus_partner === 'yes' inside of all service offering in order to find any abailable
+	// service with focus partner, then sort all the providers based on that parameter
+	/**************************************************************************************************/
+	$scope.applySortDefault = function() {
+
+		var sort_keys = ['+tier_id', '-focus_partner', '+name'];
+
+		$scope.data.filtered.main.map(function (provider) {
+
+			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+
+				var service_offering_array = provider.filters.service_offering[service_offering_key];
+
+				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+
+					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
+
+						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
+					});
+
+					return focusPartnerYes;
+				});
+
+				return serviceHasFocusPartner;
+			});
+
+			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+
+		});
+
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
@@ -1064,7 +1159,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 		$scope.init().then(function(){
-			$scope.applyFilters();
+			$scope.applyFilters('defaultFilters');
 			$scope.setFilterCSS();
 			//updateCheckboxSstatus();
 		});
