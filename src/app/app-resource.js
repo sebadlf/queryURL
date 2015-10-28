@@ -14,17 +14,26 @@ angular.module('getResource', [
  * @return {object}   $resource API call results.
  */
 .factory('getResource', ['$resource', '$q', '$timeout', 'configuration', function($resource, $q, $timeout, configuration) {
-	
+
 	var factory = {};
 
-	factory.setEnvironment = function() {
+	factory.setEnvironment = function(selectedEnv) {
 		var url;
 
 		(function getUrl() {
-			url = configuration.environment.filter(function(e) {
-				//this is now hardcoded with production, later it will be parameter from getUrl(env)
-				return e.environment === 'production';
-			});
+			//Check for a desired environment
+			if (selectedEnv){
+				url = configuration.environment.filter(function(e) {
+					return e.environment === selectedEnv;
+				});
+			}
+
+			//Fallback to production if the desired environment doesn't esxist
+			if(!url || !url.length){
+				url = configuration.environment.filter(function(e) {
+					return e.environment === 'production';
+				});
+			}
 
 			url = url[0].url;
 			console.log(url);
@@ -46,7 +55,7 @@ angular.module('getResource', [
 			}
 		);
 	};
-		
+
 
 	return factory;
 }]);
