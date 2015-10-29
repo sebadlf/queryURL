@@ -1,0 +1,29 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3070410, 2015-08-04T12:49:22-0400
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URL below.
+ * 
+ * Webfont: FF Meta Web Pro Normal by FontFont
+ * URL: http://www.myfonts.com/fonts/fontfont/ff-meta/pro-normal/
+ * 
+ * License: http://www.myfonts.com/viewlicense?type=web&buildid=3070410
+ * Licensed pageviews: 6,000,000
+ * Webfonts copyright: 2009 Erik Spiekermann published by FSI FontShop International GmbH
+ * 
+ * © 2015 MyFonts Inc
+ *
+ * Font-Meta-Normal.css
+ * - EMC: FatWire references
+ * - Was 2EE0B0_1_0 (normal)
+*/
+
+/* @font-face {font-family: 'FFMetaWebProNormal';src: url('2EE0B0_1_0.eot');src: url('2EE0B0_1_0.eot?#iefix') format('embedded-opentype'),url('2EE0B0_1_0.woff2') format('woff2'),url('2EE0B0_1_0.woff') format('woff'),url('2EE0B0_1_0.ttf') format('truetype'),url('2EE0B0_1_0.svg#wf') format('svg');} */
+@font-face {font-family: 'FFMetaWebProNormal';src: url('ff-meta-web-pro-normal.eot');src: url('ff-meta-web-pro-normal.eot?#iefix') format('embedded-opentype'),url('ff-meta-web-pro-normal.woff2') format('woff2'),url('ff-meta-web-pro-normal.woff') format('woff'),url('ff-meta-web-pro-normal.ttf') format('truetype'),url('ff-meta-web-pro-normal.svg#wf') format('svg');}
+ 
+.font-meta-normal { font-family: 'FFMetaWebProNormal'; }
+
