@@ -225,13 +225,6 @@ angular.module('appFilters', [
 								if (this_item.form_type === 'select') {
 									provider.hide = !_.contains(prvdr_fltr, value);
 								} else if (this_item.form_type === 'select_cascade') {
-									//provider.hide=true;
-									//_(prvdr_fltr).forEach(function(fltr, fltr_index) {
-									//if (_.contains(fltr,value)){
-									//provider.hide=false;
-									//return ;
-									//}
-									//});
 									provider.hide = !prvdr_fltr || !_.contains(prvdr_fltr[index], value);
 								} else {
 									return false;
