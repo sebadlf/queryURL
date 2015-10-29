@@ -25,7 +25,7 @@ angular.module('appFilters', [
 
 		var doToggleOptions = function(filter, filter_option, cascade_index) {
 			var prvdr_fltr;
-			var option_disabled = true;//var option_disabled = false; //CHANGE BY GLOBANT
+			var option_disabled = true;
 
 			_(providers).forEach(function(provider, provider_index) {
 				if (provider.hide && !provider.use_filters) {
