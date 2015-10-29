@@ -25,7 +25,7 @@ angular.module('appFilters', [
 
 		var doToggleOptions = function(filter, filter_option, cascade_index) {
 			var prvdr_fltr;
-			var option_disabled = false; //CHANGE BY GLOBANT
+			var option_disabled = true;
 
 			_(providers).forEach(function(provider, provider_index) {
 				if (provider.hide && !provider.use_filters) {
@@ -40,20 +40,20 @@ angular.module('appFilters', [
 					}
 
 					if ( _.contains(['select', 'checkbox'], filter.form_type) ) {
-						if ( _.contains(prvdr_fltr, filter_option[filter.id][0]) ) {
+						if (prvdr_fltr &&  _.contains(prvdr_fltr, filter_option[filter.id][0]) ) {
 							option_disabled = false;
 							return false;
 						} else {
-							//option_disabled = true;
+							option_disabled = true;
 						}
 					} else if ( _.contains(['select_cascade'], filter.form_type) ) {
-						if ( _.contains(
+						if (prvdr_fltr && _.contains(
 							prvdr_fltr[cascade_index], filter_option[filter.id][cascade_index][0]
 							) ) {
 							option_disabled = false;
 							return false;
 						} else {
-							//option_disabled = true;
+							option_disabled = true;
 						}
 					}
 				} else {
@@ -122,7 +122,7 @@ angular.module('appFilters', [
 				if ( !_.isNull(this_filter.parent) && !_.isEmpty(selected_siblings) ) {
 					filter_option = _.assign(filter_option, selected_siblings);
 				}
-				//option.disabled = doToggleOptions(this_filter, filter_option);
+				option.disabled = doToggleOptions(this_filter, filter_option);
 			} else if ( _.contains(['select_cascade'], this_filter.form_type) ) {
 				if (option_index === 0) {
 					_(option).forEach(function(cascade) {
@@ -135,9 +135,9 @@ angular.module('appFilters', [
 						if ( !_.isPlainObject(cascade) ) {
 							return;
 						}
-						//cascade.disabled = doToggleOptions(
-						//	this_filter, cascadeFilterOption(option_index, cascade), option_index
-						//);
+						cascade.disabled = doToggleOptions(
+							this_filter, cascadeFilterOption(option_index, cascade), option_index
+						);
 					});
 				}
 			} else {
@@ -225,14 +225,7 @@ angular.module('appFilters', [
 								if (this_item.form_type === 'select') {
 									provider.hide = !_.contains(prvdr_fltr, value);
 								} else if (this_item.form_type === 'select_cascade') {
-									provider.hide=true;
-									_(prvdr_fltr).forEach(function(fltr, fltr_index) {
-										if (_.contains(fltr,value)){
-											provider.hide=false;
-											return ;
-										}
-									});
-									//provider.hide = !_.contains(prvdr_fltr[index], value);
+									provider.hide = !prvdr_fltr || !_.contains(prvdr_fltr[index], value);
 								} else {
 									return false;
 								}
