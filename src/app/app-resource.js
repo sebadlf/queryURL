@@ -20,7 +20,7 @@ angular.module('getResource', [
 		// EMC Service Production
 		//'https://cspdb.emc.com/Services/ServiceProviders.asmx/:resource/',
 		// EMC Testing Service
-		'https://cspdbtst.emc.com/Services/ServiceProviders.asmx/:resource/'
+		'https://cspdbtst.emc.com/Services/ServiceProviders.asmx/:resource/',
 		// EMC Service Development
 		//'http://cspappdev01//Services/ServiceProviders.asmx/:resource/',
 		{

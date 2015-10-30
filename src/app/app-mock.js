@@ -11,7 +11,8 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q) {
     })
     .success(
       function(response) {
-        response.providers = setEMCProduct(response.providers);
+        //response.filters = setParentInNull(response.filters);
+        //response.providers = setEMCProduct(response.providers);
         console.log(response);
         deferred.resolve(response);
       })
@@ -24,6 +25,18 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q) {
     return deferred.promise;
   };
 
+
+  function setParentInNull(filters){
+    _(filters).forEach(function(filter,filter_index){
+        if (filter.parent !== null){
+            filter.parent =null;
+        }
+        if (filter.parent_display !== null){
+            filter.parent_display = null;
+        }
+    });
+    return filters;
+  }
 
   var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
   //var secondaryFilters = ['emc_product'];
