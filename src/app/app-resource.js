@@ -18,7 +18,9 @@ angular.module('getResource', [
 		// BlueLevel Service (DEV environment)
 		//'http://emc.dev.bluelevel.co.uk/Services/ServiceProviders.asmx/:resource/',
 		// EMC Service Production
-		'https://cspdb.emc.com/Services/ServiceProviders.asmx/:resource/',
+		//'https://cspdb.emc.com/Services/ServiceProviders.asmx/:resource/',
+		// EMC Testing Service
+		'https://cspdbtst.emc.com/Services/ServiceProviders.asmx/:resource/'
 		// EMC Service Development
 		//'http://cspappdev01//Services/ServiceProviders.asmx/:resource/',
 		{
