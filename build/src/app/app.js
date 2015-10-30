@@ -705,6 +705,8 @@ updateLocationURL(cascade_values,this.item,this.option);
 			$scope.removeFilter(filter_id);
 			// Unset from query filter removed
 			$location.search(filter_id, null);
+			$scope.data.selected.filter_primary=true;
+
 				return;
 			}
 		} else if (action === 'single') {
@@ -1036,7 +1038,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 			'filters':         {},
 			'filters_display': [],
 			'filters_options': {},
-			'filter_primary':  null,
+			'filter_primary':  true,
 			'filter_active':   null,
 			'option_desc':     {},
 			'search':          null
