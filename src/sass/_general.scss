@@ -13,7 +13,7 @@ body {
 		overflow-y: scroll;
 
 		&.no-scroll body {
-			overflow: hidden;
+			//overflow: hidden;
 		}
 	}
 }
@@ -94,3 +94,6 @@ main {
 		@include user-select(none);
 	}
 }
+
+//== IE Scroll Bars
+html{-ms-overflow-style: scrollbar;}

@@ -328,6 +328,13 @@
 						display: none;
 					}
 				}
+
+				@media (max-width: 320px) {
+					&:first-child:after {
+						margin-right: -15px;
+					}
+				}
+
 				> span {
 					display: table-cell;
 					height: 48px;
@@ -550,9 +557,11 @@
 				}
 				@media (min-width: $screen-sm-min) {
 					width: percentage(4 / $grid-columns);
+					height: 10em;
 				}
 				@media (min-width: $screen-md-min) {
-					width: percentage(3 / $grid-columns);
+					width: percentage(3.7 / $grid-columns);
+					height: 8em;
 				}
 			}
 		}

@@ -61,15 +61,25 @@ angular.module('emc_service_providers', [
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
+		var useDefaultOrder;
+
 		if ( action === 'single' && !_.isNull($scope.data.filtered.search) ) {
 			if ($scope.data.selected.search.id === $scope.data.filtered.search.id) {
 				return;
 			}
+		} else if (action === 'defaultFilters') {
+			action = undefined;
+			useDefaultOrder = true;
 		}
-		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort();
-	};
 
+		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
+
+		if (useDefaultOrder){
+			$scope.applySortDefault();
+		} else {
+			$scope.applySort();
+		}
+	};
 
 	$scope.resetFilters = function(action, option_clicked) {
 		var selected             = $scope.data.selected;
@@ -124,9 +134,9 @@ angular.module('emc_service_providers', [
 
 	$scope.resetUrl = function () {
 		$location.search('');
-	};  
+	};
 /**************************************************************************************************/
-	
+
 
 	$scope.toggleReset = function() {
 		if ( ( _.isUndefined($scope.data.selected) || _.isEmpty($scope.data.selected.filters) ) &&
@@ -147,7 +157,7 @@ function parse(val) {
     var result = null,
         tmp = [];
     location.search
-    //.replace ( "?", "" ) 
+    //.replace ( "?", "" )
     // this is better, there might be a question mark inside
     .substr(1)
         .split("&")
@@ -163,10 +173,10 @@ function updateLocationURL(cascade_values,item,option){
 		$location.search(item.id, cascade_values.toString());
 	}
 	else
-	{   
+	{
 		if (!refreshPage){
 		if (item.form_type === 'checkbox'){
-		
+
 		if ( window.location.search.indexOf(item.id) > 0) //concatenate
 		{
 			var str = parse(item.id); // get values from url for a item.id
@@ -228,13 +238,13 @@ $scope.addFilter = function(filter, option) {
 		if (this.option.disabled) {
 			return;
 		}
-		
+
 
 		var selected   = $scope.data.selected;
 		var element_id = 'filter-' + this.item.id;
 		var cascade_values; //cascade values have the values por select in cascade
 
-		
+
 
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
@@ -246,7 +256,7 @@ $scope.addFilter = function(filter, option) {
 			$scope.resetActiveCheckbox(this.item.id, this.option.id);
 			return true;
 		}
-		
+
 
 		if (_.isNull(this.item.parent_display) && this.item.has_children) {
 			selected.filter_primary = this.item.id;
@@ -440,6 +450,25 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/26/2015
+	// Force hide/show secuence on safary browser to ensure that ng-class is triggered on an element
+	/**************************************************************************************************/
+	function forceRefreshOnSafari(element) {
+
+		if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1){
+			element.hideOnSafari = true;
+
+			$timeout(function() {
+				element.hideOnSafari = false;
+				$rootScope.$digest();
+			}, 10, false);
+		}
+
+	}
+	/**************************************************************************************************/
+
 	$scope.changeSort = function(index) {
 		var selected = $scope.data.labels.main.columns[index];
 		if ( !selected.sort_by && _.isNull($scope.data.filtered.search) ) {
@@ -448,8 +477,17 @@ updateLocationURL(cascade_values,this.item,this.option);
 			});
 			$scope.toggleDetail();
 			$scope.applySort();
+
+			var column = $scope.data.labels.main.columns[index];
+
+			forceRefreshOnSafari(column);
 		}
 	};
+
+	/*************************************************************************************************
+	// Author: Globant
+	// Date: 10/22/2015
+	// Old sort stategy, it should be deleted
 
 	$scope.applySort = function() {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
@@ -460,6 +498,63 @@ updateLocationURL(cascade_values,this.item,this.option);
 				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
 			}
 		});
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+	*************************************************************************************************/
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/22/2015
+	// Apply Sort specialiced on front en for every visible column
+	/**************************************************************************************************/
+	$scope.applySort = function() {
+		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
+		var sort_keys = [];
+
+		if (column.title === 'Cloud Service Provider Name') {
+			sort_keys = ['+name'];
+		} else if (column.title === 'Tier') {
+			sort_keys = ['+tier_id', '-focus_partner', '+name'];
+		} else if (column.title === 'Cloud Partner Connect') {
+			sort_keys = ['-cloud_partner_connect', '+tier_id', '-focus_partner', '+name'];
+		}
+
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/21/2015
+	// Looks for focus_partner === 'yes' inside of all service offering in order to find any abailable
+	// service with focus partner, then sort all the providers based on that parameter
+	/**************************************************************************************************/
+	$scope.applySortDefault = function() {
+
+		var sort_keys = ['+tier_id', '-focus_partner', '+name'];
+
+		$scope.data.filtered.main.map(function (provider) {
+
+			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+
+				var service_offering_array = provider.filters.service_offering[service_offering_key];
+
+				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+
+					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
+
+						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
+					});
+
+					return focusPartnerYes;
+				});
+
+				return serviceHasFocusPartner;
+			});
+
+			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+
+		});
+
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
@@ -490,23 +585,38 @@ updateLocationURL(cascade_values,this.item,this.option);
 									if ( $scope.isXSmall() ) {
 										if ( _.isUndefined($scope.data.selected.xs_nav_open) ||
 											_.isNull($scope.data.selected.xs_nav_open) ) {
-											offset = -57 + item.parentElement.offsetTop - item.offsetHeight;
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										} else {
-											offset = -237 + item.parentElement.offsetTop - item.offsetHeight;
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										}
 									} else {
-										offset = -197 + item.parentElement.offsetTop - item.offsetHeight;
+
+										offset = -jQuery('#headerWrap').height() -
+												jQuery('.app-nav').height() -
+												jQuery('.filters-selected').height();
 									}
 								} else {
 									if ( $scope.isXSmall() ) {
 										if ( _.isUndefined($scope.data.selected.xs_nav_open) ||
 											_.isNull($scope.data.selected.xs_nav_open) ) {
-											offset = -120;
+
+											offset = -jQuery('#headerWrap').height() -
+														jQuery('.app-nav').height();
 										} else {
-											offset = -300;
+
+											offset = -jQuery('#headerWrap').height() -
+													jQuery('.app-nav').height();
+
 										}
+
 									} else {
-										offset = -235;
+
+										offset = -jQuery('header').height() -
+												(jQuery('.app-nav').height() - 6) -
+												jQuery('.filters-selected').height();
+
 									}
 								}
 
@@ -894,7 +1004,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 // Author: Globant
 // Date: 02/07/2015
-// Init function declaration - This function is the responsible for load all the information from 
+// Init function declaration - This function is the responsible for load all the information from
 // cache when the user refresh the page or copy/paste the link into another page
 /**************************************************************************************************/
 var refreshPage = false;
@@ -943,7 +1053,7 @@ function updateCheckboxSstatus(){
 					$location.search(filterObject.filter.id, filterObject.option[j].id);
 				}
 			}
-		}	
+		}
 	}
 }
 
@@ -957,13 +1067,13 @@ var unregister = $scope.$watch('checkbox', function() {
 	if(!flagAddFilter){
 		updateCheckboxSstatus();
 		}
-	}, true); 
+	}, true);
 
 
 /**************************************************************************************************/
 // Author: Globant
 // Date: 21/07/2015
-// Unchecks the checkbox on Reset Filter button  
+// Unchecks the checkbox on Reset Filter button
 /**************************************************************************************************/
 
 function disableCheckMarks(filter_id){
@@ -988,13 +1098,13 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 	function refresh(){
-	
+
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	MockSrvApi.getBlueLevelBE().then(function(response) {
 		$scope.data = response;
-		
+
 		$scope.data.is_cpc = false;
 		var search         = window.location.search;
 		var params         = {};
@@ -1036,7 +1146,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 		$scope.init().then(function(){
-			$scope.applyFilters();
+			$scope.applyFilters('defaultFilters');
 			$scope.setFilterCSS();
 			//updateCheckboxSstatus();
 		});

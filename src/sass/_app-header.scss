@@ -12,6 +12,17 @@
 	@include container-fixed();
 }
 
+
+/**
+ * Search form in #headerTop, changed specifically for min-width: 979px since de component
+ * is imported in index.htm with a default style.
+ */
+#header #navigation_wrapper .searchFormWrapper {
+	@media (min-width: 979px) {
+		margin-right: 35px;
+	}
+}
+
 .app-nav {
 	@media (min-width: $screen-sm-min) {
 		background: url('#{$image-path}bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent;
@@ -97,7 +108,7 @@
 			text-transform: uppercase;
 
 			@media (min-width: $screen-sm-min) {
-				font-size: 1.95em;
+				font-size: 1.75em;
 				margin-top: 25px;
 				font-family: $font-family-display;
 			}
@@ -132,7 +143,7 @@
 			margin-top: 20px;
 		}
 		@media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
-			width: percentage(6 / $grid-columns);
+			width: percentage(5 / $grid-columns);
 		}
 
 		@media (min-width: $screen-sm-min) {
@@ -148,7 +159,7 @@
 			.app-reset {
 				width: percentage(2 / $grid-columns);
 			}
-			label {
+			label:not(.placeholder-ie) {
 				@include sr-only;
 
 				+ span {
@@ -240,7 +251,7 @@
 	@media (max-width: $screen-xs-max) {
 		.app-title h1,
 		.app-title h2,
-		.app-search .form-group label,
+		.app-search .form-group label:not(.placeholder-ie),
 		.app-search .form-group input,
 		.app-search .form-group .form-control-feedback,
 		.app-search .form-group .dropdown-menu,
@@ -250,7 +261,7 @@
 		}
 		.app-title h1,
 		.app-title h2,
-		.app-search .form-group label,
+		.app-search .form-group label:not(.placeholder-ie),
 		.xs-nav-open & .app-search .form-group button {
 			position: relative;
 			width: 100%;
@@ -281,24 +292,25 @@
 			line-height: 1.2;
 			background: none;
 			font-size: 1.15em;
+			font-family: "Architects Daughter";
 		}
 		.app-title h2,
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			font-weight: normal;
 		}
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			text-transform: uppercase;
 		}
 		.app-title h1,
 		.app-title h2,
 		.app-search .form-group,
-		.app-search .form-group label {
+		.app-search .form-group label:not(.placeholder-ie) {
 			margin: 0;
 		}
 		.xs-nav-open & .app-title h2,
-		.xs-nav-open & .app-search .form-group label,
+		.xs-nav-open & .app-search .form-group label:not(.placeholder-ie),
 		.xs-nav-open & .app-search .form-group button,
-		.xs-search-open & .app-search .form-group label,
+		.xs-search-open & .app-search .form-group label:not(.placeholder-ie),
 		.xs-search-open & .app-search .form-group button,
 		.xs-filters-open & .app-title h2,
 		.xs-filters-open & .app-search .form-group button {
@@ -306,7 +318,7 @@
 		}
 		.app-title h1:after,
 		.app-title h2:after,
-		.app-search .form-group label:after {
+		.app-search .form-group label:not(.placeholder-ie):after {
 			display: inline-block;
 			position: absolute;
 			right: 0;
@@ -376,7 +388,7 @@
 					top: 13px;
 					right: 20px;
 				}
-				label {
+				label:not(.placeholder-ie) {
 					padding: 20px 15px 20px 40px;
 					width: auto;
 					max-width: 0;
@@ -635,6 +647,11 @@
 			margin-left: 2%;
 			border-width: 6px;
 			color: $emc-gray-light;
+		}
+		@media (max-width: 320px) {
+			.caret {
+				margin-left: 0;
+			}
 		}
 	}
 	.btn-group.open {

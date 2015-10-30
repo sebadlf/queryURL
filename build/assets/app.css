@@ -2426,9 +2426,7 @@ html, body {
 
 @media (min-width: 768px) {
   html {
-    overflow-y: scroll; }
-    html.no-scroll body {
-      overflow: hidden; } }
+    overflow-y: scroll; } }
 
 main {
   background: #fff; }
@@ -2498,6 +2496,9 @@ main {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none; }
+
+html {
+  -ms-overflow-style: scrollbar; }
 
 /*!
 Animate.css - http://daneden.me/animate
@@ -2741,6 +2742,14 @@ button.close {
   .app-header:after, .filters .filters-primary > div:first-child:after, .filters .filters-secondary > div:first-child:after, .filters .tab-pane:after {
     clear: both; }
 
+/**
+ * Search form in #headerTop, changed specifically for min-width: 979px since de component
+ * is imported in index.htm with a default style.
+ */
+@media (min-width: 979px) {
+  #header #navigation_wrapper .searchFormWrapper {
+    margin-right: 35px; } }
+
 @media (min-width: 768px) {
   .app-nav {
     background: url('/assets/img/bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent; } }
@@ -2817,7 +2826,7 @@ button.close {
       text-transform: uppercase; }
       @media (min-width: 768px) {
         .app-header .app-title h1 {
-          font-size: 1.95em;
+          font-size: 1.75em;
           margin-top: 25px;
           font-family: "Architects Daughter"; } }
       @media (min-width: 1200px) {
@@ -2842,7 +2851,7 @@ button.close {
       margin-top: 20px; } }
   @media (min-width: 768px) and (max-width: 1199px) {
     .app-header .app-search {
-      width: 50%; } }
+      width: 41.6666666667%; } }
   @media (min-width: 768px) {
     .app-header .app-search .app-typeahead, .app-header .app-search .app-reset {
       position: relative;
@@ -2852,7 +2861,7 @@ button.close {
       width: 66.6666666667%; }
     .app-header .app-search .app-reset {
       width: 16.6666666667%; }
-    .app-header .app-search label {
+    .app-header .app-search label:not(.placeholder-ie) {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -2861,7 +2870,7 @@ button.close {
       overflow: hidden;
       clip: rect(0, 0, 0, 0);
       border: 0; }
-      .app-header .app-search label + span {
+      .app-header .app-search label:not(.placeholder-ie) + span {
         display: none; } }
   @media (min-width: 768px) and (max-width: 991px) {
     .app-header .app-search .app-typeahead, .app-header .app-search .app-reset {
@@ -2934,9 +2943,9 @@ button.close {
       .app-header .app-search button .xs-max {
         display: none; } }
   @media (max-width: 767px) {
-    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group label, .app-header .app-search .form-group input, .app-header .app-search .form-group .form-control-feedback, .app-header .app-search .form-group .dropdown-menu, .app-header .app-search .form-group button, .app-header .app-search .form-group .xs-max span {
+    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group label:not(.placeholder-ie), .app-header .app-search .form-group input, .app-header .app-search .form-group .form-control-feedback, .app-header .app-search .form-group .dropdown-menu, .app-header .app-search .form-group button, .app-header .app-search .form-group .xs-max span {
       display: none; }
-    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group label, .xs-nav-open .app-header .app-search .form-group button {
+    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group label:not(.placeholder-ie), .xs-nav-open .app-header .app-search .form-group button {
       position: relative;
       width: 100%;
       max-width: none;
@@ -2954,26 +2963,27 @@ button.close {
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none; }
-      .app-header .app-title h1:hover, .app-header .app-title h1:focus, .app-header .app-title h2:hover, .app-header .app-title h2:focus, .app-header .app-search .form-group label:hover, .app-header .app-search .form-group label:focus, .xs-nav-open .app-header .app-search .form-group button:hover, .xs-nav-open .app-header .app-search .form-group button:focus {
+      .app-header .app-title h1:hover, .app-header .app-title h1:focus, .app-header .app-title h2:hover, .app-header .app-title h2:focus, .app-header .app-search .form-group label:not(.placeholder-ie):hover, .app-header .app-search .form-group label:not(.placeholder-ie):focus, .xs-nav-open .app-header .app-search .form-group button:hover, .xs-nav-open .app-header .app-search .form-group button:focus {
         cursor: pointer;
         outline: none; }
-      .app-header .app-title h1 .xs-max span + span, .app-header .app-title h2 .xs-max span + span, .app-header .app-search .form-group label .xs-max span + span, .xs-nav-open .app-header .app-search .form-group button .xs-max span + span {
+      .app-header .app-title h1 .xs-max span + span, .app-header .app-title h2 .xs-max span + span, .app-header .app-search .form-group label:not(.placeholder-ie) .xs-max span + span, .xs-nav-open .app-header .app-search .form-group button .xs-max span + span {
         display: inline; }
     .app-header .app-title h1 {
       display: block;
       padding-right: 3em;
       line-height: 1.2;
       background: none;
-      font-size: 1.15em; }
-    .app-header .app-title h2, .app-header .app-search .form-group label {
+      font-size: 1.15em;
+      font-family: "Architects Daughter"; }
+    .app-header .app-title h2, .app-header .app-search .form-group label:not(.placeholder-ie) {
       font-weight: normal; }
-    .app-header .app-search .form-group label {
+    .app-header .app-search .form-group label:not(.placeholder-ie) {
       text-transform: uppercase; }
-    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group, .app-header .app-search .form-group label {
+    .app-header .app-title h1, .app-header .app-title h2, .app-header .app-search .form-group, .app-header .app-search .form-group label:not(.placeholder-ie) {
       margin: 0; }
-    .xs-nav-open .app-header .app-title h2, .xs-nav-open .app-header .app-search .form-group label, .xs-nav-open .app-header .app-search .form-group button, .xs-search-open .app-header .app-search .form-group label, .xs-search-open .app-header .app-search .form-group button, .xs-filters-open .app-header .app-title h2, .xs-filters-open .app-header .app-search .form-group button {
+    .xs-nav-open .app-header .app-title h2, .xs-nav-open .app-header .app-search .form-group label:not(.placeholder-ie), .xs-nav-open .app-header .app-search .form-group button, .xs-search-open .app-header .app-search .form-group label:not(.placeholder-ie), .xs-search-open .app-header .app-search .form-group button, .xs-filters-open .app-header .app-title h2, .xs-filters-open .app-header .app-search .form-group button {
       display: block; }
-    .app-header .app-title h1:after, .app-header .app-title h2:after, .app-header .app-search .form-group label:after {
+    .app-header .app-title h1:after, .app-header .app-title h2:after, .app-header .app-search .form-group label:not(.placeholder-ie):after {
       display: inline-block;
       position: absolute;
       right: 0;
@@ -3025,19 +3035,19 @@ button.close {
         position: absolute;
         top: 13px;
         right: 20px; }
-      .xs-search-open .app-search .form-group label {
+      .xs-search-open .app-search .form-group label:not(.placeholder-ie) {
         padding: 20px 15px 20px 40px;
         width: auto;
         max-width: 0;
         border-bottom: none;
         background: none; }
-        .xs-search-open .app-search .form-group label:after {
+        .xs-search-open .app-search .form-group label:not(.placeholder-ie):after {
           content: "\e079";
           right: auto;
           left: 0;
           width: auto;
           padding-left: 20px; }
-        .xs-search-open .app-search .form-group label + span {
+        .xs-search-open .app-search .form-group label:not(.placeholder-ie) + span {
           display: inline-block;
           width: 100%;
           padding: 15px 20px;
@@ -3934,10 +3944,12 @@ button.close {
         float: none; } }
     @media (min-width: 768px) {
       .providers .detail .contacts + div > p {
-        width: 33.3333333333%; } }
+        width: 33.3333333333%;
+        height: 10em; } }
     @media (min-width: 992px) {
       .providers .detail .contacts + div > p {
-        width: 25%; } }
+        width: 30.8333333333%;
+        height: 8em; } }
 .providers .detail .contact-title {
   font-weight: bold; }
 .providers .detail .services-resellers {
@@ -4060,3 +4072,52 @@ ul {
 #footer #footerSeoBlock {
   padding-right: 10px;
   padding-left: 10px; }
+
+label.placeholder-ie {
+  width: 100%;
+  font-weight: normal;
+  display: inline;
+  margin: 0px; }
+
+.app-header .app-search label.placeholder-ie + span {
+  display: block; }
+
+.placeholder-ie .xs-max {
+  display: none; }
+
+.ie10 .placeholder-ie {
+  display: block; }
+  .ie10 .placeholder-ie .xs-max {
+    display: block; }
+  .ie10 .placeholder-ie input::-ms-clear {
+    display: none; }
+.ie10 .placeholder-ie + span.glyphicon-search:before {
+  color: gray; }
+@media (max-width: 767px) {
+  .ie10 .xs-search-open .app-search .placeholder-ie .xs-max span:first-child {
+    display: block;
+    top: 135px;
+    margin-left: 3%; } }
+.ie10 .placeholder-ie span {
+  position: absolute;
+  z-index: 1;
+  cursor: text;
+  pointer-events: none;
+  color: #999;
+  /* Input padding + input border */
+  padding: 9px;
+  padding-left: 7px;
+  /* Firefox does not respond well to different line heights. Use padding instead. */
+  line-height: 17px;
+  /* This gives a little gap between the cursor and the label */
+  margin-left: 2px; }
+.ie10 .placeholder-ie input, .ie10 .placeholder-ie textarea, .ie10 .placeholder-ie select {
+  z-index: 0;
+  padding: 6px;
+  margin: 0;
+  font: inherit;
+  line-height: 17px; }
+.ie10 .placeholder-ie select {
+  padding: 5px;
+  /* Unfortunately selects don't respond well to padding. They need an explicit height. */
+  height: 31px; }
