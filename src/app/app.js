@@ -1103,10 +1103,8 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	MockSrvApi.getBlueLevelBE().then(function(response) {
-		//$scope.data = response;
-		response.filters = setParentInNull(response.filters);
-        response.providers = setEMCProduct(response.providers);
-        $scope.data = response;
+		setSecondaryFilters(response).then(function(response){
+		$scope.data = response;
         console.log($scope.data);
 
 		$scope.data.is_cpc = false;
@@ -1144,34 +1142,43 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 		};
 
 
+/**************************************************************************************************/
+// Author: Globant
+// Date: 02/07/2015
+// Init Function - Copy/Paste link feature
+/**************************************************************************************************/
+
+		$scope.init().then(function(){
+			$scope.applyFilters('defaultFilters');
+			$scope.setFilterCSS();
+			//updateCheckboxSstatus();
+		});
+
+	});
+});
+	}
 
 /**************************************************************************************************/
 // Author: Globant
 // Date: 02/07/2015
-// Set parent in null and set secondary filters for each option
+// Secondary Filters
 /**************************************************************************************************/
-
-  function setParentInNull(filters){
-    _(filters).forEach(function(filter,filter_index){
+  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
+  //var secondaryFilters = ['emc_product'];
+  function setSecondaryFilters(response){
+	var deferred = $q.defer();
+	//Set parent in null and set secondary filters for each option
+	_(response.filters).forEach(function(filter,filter_index){
         if (filter.parent !== null){
             filter.parent =null;
         }
         if (filter.parent_display !== null){
             filter.parent_display = null;
         }
-        /*
-        if (filter.has_children){
-			filter.has_children=true;
-        }*/
     });
-    return filters;
-  }
 
-  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
-  //var secondaryFilters = ['emc_product'];
-  function setEMCProduct(providers){
     _(secondaryFilters).forEach(function(filter, filter_index) {
-      _(providers).forEach(function(provider, provider_index) {
+      _(response.providers).forEach(function(provider, provider_index) {
         //console.log(provider);
         var emc_attributes = null;
         var service_offering = provider.filters.service_offering;
@@ -1198,24 +1205,11 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
         }
       });
     });
-    return providers;
+	deferred.resolve(response);
+    return deferred.promise;
   }
 
 
-/**************************************************************************************************/
-// Author: Globant
-// Date: 02/07/2015
-// Init Function - Copy/Paste link feature
-/**************************************************************************************************/
-
-		$scope.init().then(function(){
-			$scope.applyFilters('defaultFilters');
-			$scope.setFilterCSS();
-			//updateCheckboxSstatus();
-		});
-
-	});
-	}
 /**************************************************************************************************/
 // Author: Globant
 // Date: 02/07/2015
