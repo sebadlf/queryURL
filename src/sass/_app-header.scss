@@ -115,6 +115,9 @@
 			@media (min-width: $screen-lg-min) {
 				font-size: 1.75em;
 			}
+			@media (max-width: 767px) {
+				font-family: $font-family-display !important;
+			}
 		}
 		h2 {
 			@media (max-width: $screen-xs-max) {
