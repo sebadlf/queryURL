@@ -111,14 +111,12 @@
 				font-size: 1.75em;
 				margin-top: 25px;
 				font-family: $font-family-display;
-				font-weight: bold;
 			}
 			@media (min-width: $screen-lg-min) {
 				font-size: 1.75em;
 			}
 			@media (max-width: 767px) {
 				font-family: $font-family-display !important;
-				font-weight: bold;
 			}
 		}
 		h2 {
