@@ -3,6 +3,7 @@
  */
 angular.module('emc_service_providers', [
 	'ngRoute',
+	'mConfiguration',
 	'getResource',
 	'appFilters',
 	'angular-ui.dropdown',
@@ -131,9 +132,22 @@ angular.module('emc_service_providers', [
 //Reset all filter from URL
 //Author: Globant
 //Date: 04/07/2015
-
+/**************************************************************************************************/
+//Update
+//Date: 10/24/2015
+//Reset url query string and restore environment parameter if it exists
+/**************************************************************************************************/
 	$scope.resetUrl = function () {
-		$location.search('');
+		var env = $location.search().env ? $location.search().env : null;
+
+		$location.search(''); //Clears URL's Filter Params queried
+
+		//Restore environment parameter
+		if (env){
+			$location.search({
+				env: env
+			});
+		}
 	};
 /**************************************************************************************************/
 
@@ -301,7 +315,6 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
-
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
 		var filters        = $scope.data.filters;
@@ -314,7 +327,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 		if ( selected_count === 1 && _.isUndefined(option_id) ) {
 			$scope.resetFilters('all');
-			$location.search(''); //Clears URL's Filter Params queried
+
+			//$location.search(''); //Clears URL's Filter Params queried
+			$scope.resetUrl();
 
 			return;
 		}
@@ -1114,7 +1129,8 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
-	MockSrvApi.getBlueLevelBE().then(function(response) {
+	//getResource.setEnvironment($location.search().env);
+	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
@@ -1228,7 +1244,6 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
-
 
 }]);
 

@@ -3,6 +3,7 @@
  */
 angular.module('emc_service_providers', [
 	'ngRoute',
+	'mConfiguration',
 	'getResource',
 	'appFilters',
 	'angular-ui.dropdown',
@@ -131,9 +132,22 @@ angular.module('emc_service_providers', [
 //Reset all filter from URL
 //Author: Globant
 //Date: 04/07/2015
-
+/**************************************************************************************************/
+//Update
+//Date: 10/24/2015
+//Reset url query string and restore environment parameter if it exists
+/**************************************************************************************************/
 	$scope.resetUrl = function () {
-		$location.search('');
+		var env = $location.search().env ? $location.search().env : null;
+
+		$location.search(''); //Clears URL's Filter Params queried
+
+		//Restore environment parameter
+		if (env){
+			$location.search({
+				env: env
+			});
+		}
 	};
 /**************************************************************************************************/
 
@@ -301,7 +315,6 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
-
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
 		var filters        = $scope.data.filters;
@@ -314,7 +327,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 		if ( selected_count === 1 && _.isUndefined(option_id) ) {
 			$scope.resetFilters('all');
-			$location.search(''); //Clears URL's Filter Params queried
+
+			//$location.search(''); //Clears URL's Filter Params queried
+			$scope.resetUrl();
 
 			return;
 		}
@@ -812,14 +827,26 @@ updateLocationURL(cascade_values,this.item,this.option);
 			}
 		}
 
-		modal = $modal.open({
-			controller: $scope.confirmActionCtrl,
-			template:   '<div class="modal-body"><h6>' + labels.header + '</h6><p>' +
-						(action === 'single' ? labels.body.single : labels.body[filter_id]) +
-						'</p></div><div class="modal-footer">' +
-						'<button class="btn" ng-click="cancel()">' + labels.confirm.no + '</button>' +
-						'<button class="btn" ng-click="ok()">' + labels.confirm.yes + '</button></div>'
-		});
+		// modal = $modal.open({
+		// controller: $scope.confirmActionCtrl,
+		// template:   '<div class="modal-body"><h6>' + labels.header + '</h6><p>' +
+		// (action === 'single' ? labels.body.single : labels.body[filter_id]) +
+		// '</p></div><div class="modal-footer">' +
+		// '<button class="btn" ng-click="cancel()">' + labels.confirm.no + '</button>' +
+		// '<button class="btn" ng-click="ok()">' + labels.confirm.yes + '</button></div>'
+		// });
+
+		/**************************************************************************************************/
+		// Author: Globant
+		// Date: 11/03/2015
+		// Generate a mock instance of modal in order to mantain the same behavior
+		// without having to confirm the action
+		/**************************************************************************************************/
+		var modalDeferred = $q.defer();
+		modalDeferred.resolve();
+		modal = {
+			result: modalDeferred.promise
+		};
 
 		if (action === 'add') {
 			modal.result.then(function() {
@@ -850,16 +877,16 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
-	$scope.confirmActionCtrl = ['$scope', '$modalInstance', function($scope, $modalInstance) {
-		$scope.ok = function() {
-			$modalInstance.close('result');
-			//$location.search(''); /********/
-		};
+	// $scope.confirmActionCtrl = ['$scope', '$modalInstance', function($scope, $modalInstance) {
+	// $scope.ok = function() {
+	// $modalInstance.close('result');
+	// //$location.search(''); /********/
+	// };
 
-		$scope.cancel = function() {
-			$modalInstance.dismiss('cancel');
-		};
-	}];
+	// $scope.cancel = function() {
+	// $modalInstance.dismiss('cancel');
+	// };
+	// }];
 
 	$scope.isXSmall = function() {
 		var width = window.innerWidth || document.documentElement.clientWidth;
@@ -1102,7 +1129,8 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
-	MockSrvApi.getBlueLevelBE().then(function(response) {
+	//getResource.setEnvironment($location.search().env);
+	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
@@ -1193,7 +1221,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
                  if (provider.filters[filter] === undefined){ //initial first
                  provider.filters[filter] = attributes[propertyName2];
                  }
-                 else{ //more than one filter 
+                 else{ //more than one filter
                    var obj2 = attributes[propertyName2];
                    if (! _.contains(provider.filters[filter], obj2[0]) ){
                         provider.filters[filter].push(obj2[0]);
@@ -1216,7 +1244,6 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
-
 
 }]);
 
