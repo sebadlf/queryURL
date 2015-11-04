@@ -3,6 +3,7 @@
  */
 angular.module('emc_service_providers', [
 	'ngRoute',
+	'mConfiguration',
 	'getResource',
 	'appFilters',
 	'angular-ui.dropdown',
@@ -61,15 +62,25 @@ angular.module('emc_service_providers', [
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
+		var useDefaultOrder;
+
 		if ( action === 'single' && !_.isNull($scope.data.filtered.search) ) {
 			if ($scope.data.selected.search.id === $scope.data.filtered.search.id) {
 				return;
 			}
+		} else if (action === 'defaultFilters') {
+			action = undefined;
+			useDefaultOrder = true;
 		}
-		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
-		$scope.applySort();
-	};
 
+		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
+
+		if (useDefaultOrder){
+			$scope.applySortDefault();
+		} else {
+			$scope.applySort();
+		}
+	};
 
 	$scope.resetFilters = function(action, option_clicked) {
 		var selected             = $scope.data.selected;
@@ -121,9 +132,22 @@ angular.module('emc_service_providers', [
 //Reset all filter from URL
 //Author: Globant
 //Date: 04/07/2015
-
+/**************************************************************************************************/
+//Update
+//Date: 10/24/2015
+//Reset url query string and restore environment parameter if it exists
+/**************************************************************************************************/
 	$scope.resetUrl = function () {
-		$location.search('');
+		var env = $location.search().env ? $location.search().env : null;
+
+		$location.search(''); //Clears URL's Filter Params queried
+
+		//Restore environment parameter
+		if (env){
+			$location.search({
+				env: env
+			});
+		}
 	};
 /**************************************************************************************************/
 
@@ -291,7 +315,6 @@ updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
-
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
 		var filters        = $scope.data.filters;
@@ -304,7 +327,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 		if ( selected_count === 1 && _.isUndefined(option_id) ) {
 			$scope.resetFilters('all');
-			$location.search(''); //Clears URL's Filter Params queried
+
+			//$location.search(''); //Clears URL's Filter Params queried
+			$scope.resetUrl();
 
 			return;
 		}
@@ -440,6 +465,25 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/26/2015
+	// Force hide/show secuence on safary browser to ensure that ng-class is triggered on an element
+	/**************************************************************************************************/
+	function forceRefreshOnSafari(element) {
+
+		if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1){
+			element.hideOnSafari = true;
+
+			$timeout(function() {
+				element.hideOnSafari = false;
+				$rootScope.$digest();
+			}, 10, false);
+		}
+
+	}
+	/**************************************************************************************************/
+
 	$scope.changeSort = function(index) {
 		var selected = $scope.data.labels.main.columns[index];
 		if ( !selected.sort_by && _.isNull($scope.data.filtered.search) ) {
@@ -448,8 +492,17 @@ updateLocationURL(cascade_values,this.item,this.option);
 			});
 			$scope.toggleDetail();
 			$scope.applySort();
+
+			var column = $scope.data.labels.main.columns[index];
+
+			forceRefreshOnSafari(column);
 		}
 	};
+
+	/*************************************************************************************************
+	// Author: Globant
+	// Date: 10/22/2015
+	// Old sort stategy, it should be deleted
 
 	$scope.applySort = function() {
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
@@ -460,6 +513,63 @@ updateLocationURL(cascade_values,this.item,this.option);
 				sort_keys.push( (order === 'desc' ? '-' : '+') + column.sort_keys[index] );
 			}
 		});
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+	*************************************************************************************************/
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/22/2015
+	// Apply Sort specialiced on front en for every visible column
+	/**************************************************************************************************/
+	$scope.applySort = function() {
+		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
+		var sort_keys = [];
+
+		if (column.title === 'Cloud Service Provider Name') {
+			sort_keys = ['+name'];
+		} else if (column.title === 'Tier') {
+			sort_keys = ['+tier_id', '-focus_partner', '+name'];
+		} else if (column.title === 'Cloud Partner Connect') {
+			sort_keys = ['-cloud_partner_connect', '+tier_id', '-focus_partner', '+name'];
+		}
+
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 10/21/2015
+	// Looks for focus_partner === 'yes' inside of all service offering in order to find any abailable
+	// service with focus partner, then sort all the providers based on that parameter
+	/**************************************************************************************************/
+	$scope.applySortDefault = function() {
+
+		var sort_keys = ['+tier_id', '-focus_partner', '+name'];
+
+		$scope.data.filtered.main.map(function (provider) {
+
+			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+
+				var service_offering_array = provider.filters.service_offering[service_offering_key];
+
+				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+
+					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
+
+						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
+					});
+
+					return focusPartnerYes;
+				});
+
+				return serviceHasFocusPartner;
+			});
+
+			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+
+		});
+
 		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
@@ -705,6 +815,8 @@ updateLocationURL(cascade_values,this.item,this.option);
 			$scope.removeFilter(filter_id);
 			// Unset from query filter removed
 			$location.search(filter_id, null);
+			$scope.data.selected.filter_primary=true;
+
 				return;
 			}
 		} else if (action === 'single') {
@@ -715,14 +827,26 @@ updateLocationURL(cascade_values,this.item,this.option);
 			}
 		}
 
-		modal = $modal.open({
-			controller: $scope.confirmActionCtrl,
-			template:   '<div class="modal-body"><h6>' + labels.header + '</h6><p>' +
-						(action === 'single' ? labels.body.single : labels.body[filter_id]) +
-						'</p></div><div class="modal-footer">' +
-						'<button class="btn" ng-click="cancel()">' + labels.confirm.no + '</button>' +
-						'<button class="btn" ng-click="ok()">' + labels.confirm.yes + '</button></div>'
-		});
+		// modal = $modal.open({
+		// controller: $scope.confirmActionCtrl,
+		// template:   '<div class="modal-body"><h6>' + labels.header + '</h6><p>' +
+		// (action === 'single' ? labels.body.single : labels.body[filter_id]) +
+		// '</p></div><div class="modal-footer">' +
+		// '<button class="btn" ng-click="cancel()">' + labels.confirm.no + '</button>' +
+		// '<button class="btn" ng-click="ok()">' + labels.confirm.yes + '</button></div>'
+		// });
+
+		/**************************************************************************************************/
+		// Author: Globant
+		// Date: 11/03/2015
+		// Generate a mock instance of modal in order to mantain the same behavior
+		// without having to confirm the action
+		/**************************************************************************************************/
+		var modalDeferred = $q.defer();
+		modalDeferred.resolve();
+		modal = {
+			result: modalDeferred.promise
+		};
 
 		if (action === 'add') {
 			modal.result.then(function() {
@@ -753,16 +877,16 @@ updateLocationURL(cascade_values,this.item,this.option);
 		}
 	};
 
-	$scope.confirmActionCtrl = ['$scope', '$modalInstance', function($scope, $modalInstance) {
-		$scope.ok = function() {
-			$modalInstance.close('result');
-			//$location.search(''); /********/
-		};
+	// $scope.confirmActionCtrl = ['$scope', '$modalInstance', function($scope, $modalInstance) {
+	// $scope.ok = function() {
+	// $modalInstance.close('result');
+	// //$location.search(''); /********/
+	// };
 
-		$scope.cancel = function() {
-			$modalInstance.dismiss('cancel');
-		};
-	}];
+	// $scope.cancel = function() {
+	// $modalInstance.dismiss('cancel');
+	// };
+	// }];
 
 	$scope.isXSmall = function() {
 		var width = window.innerWidth || document.documentElement.clientWidth;
@@ -1005,8 +1129,11 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
-	MockSrvApi.getBlueLevelBE().then(function(response) {
+	//getResource.setEnvironment($location.search().env);
+	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
+		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
+        console.log($scope.data);
 
 		$scope.data.is_cpc = false;
 		var search         = window.location.search;
@@ -1036,11 +1163,12 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 			'filters':         {},
 			'filters_display': [],
 			'filters_options': {},
-			'filter_primary':  null,
+			'filter_primary':  true,
 			'filter_active':   null,
 			'option_desc':     {},
 			'search':          null
 		};
+
 
 /**************************************************************************************************/
 // Author: Globant
@@ -1049,20 +1177,73 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 /**************************************************************************************************/
 
 		$scope.init().then(function(){
-			$scope.applyFilters();
+			$scope.applyFilters('defaultFilters');
 			$scope.setFilterCSS();
 			//updateCheckboxSstatus();
 		});
 
 	});
+});
 	}
+
+/**************************************************************************************************/
+// Author: Globant
+// Date: 02/07/2015
+// Secondary Filters
+/**************************************************************************************************/
+  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
+  //var secondaryFilters = ['emc_product'];
+  function setSecondaryFilters(response){
+	var deferred = $q.defer();
+	//Set parent in null and set secondary filters for each option
+	_(response.filters).forEach(function(filter,filter_index){
+        if (filter.parent !== null){
+            filter.parent =null;
+        }
+        if (filter.parent_display !== null){
+            filter.parent_display = null;
+        }
+    });
+
+    _(secondaryFilters).forEach(function(filter, filter_index) {
+      _(response.providers).forEach(function(provider, provider_index) {
+        //console.log(provider);
+        var emc_attributes = null;
+        var service_offering = provider.filters.service_offering;
+        for(var propertyName in service_offering) {
+           //console.log(service_offering[propertyName]);
+           var obj = service_offering[propertyName];
+           //console.log(obj[0]);
+           var attributes = obj[0];
+           for(var propertyName2 in attributes) {
+              if ( propertyName2 === filter){
+                 console.log(attributes[propertyName2]); //value of emc_product
+                 if (provider.filters[filter] === undefined){ //initial first
+                 provider.filters[filter] = attributes[propertyName2];
+                 }
+                 else{ //more than one filter
+                   var obj2 = attributes[propertyName2];
+                   if (! _.contains(provider.filters[filter], obj2[0]) ){
+                        provider.filters[filter].push(obj2[0]);
+                   }
+                 }
+                 break;
+              }
+           }
+        }
+      });
+    });
+	deferred.resolve(response);
+    return deferred.promise;
+  }
+
+
 /**************************************************************************************************/
 // Author: Globant
 // Date: 02/07/2015
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
-
 
 }]);
 

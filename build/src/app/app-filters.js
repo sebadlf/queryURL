@@ -40,14 +40,14 @@ angular.module('appFilters', [
 					}
 
 					if ( _.contains(['select', 'checkbox'], filter.form_type) ) {
-						if ( _.contains(prvdr_fltr, filter_option[filter.id][0]) ) {
+						if (prvdr_fltr &&  _.contains(prvdr_fltr, filter_option[filter.id][0]) ) {
 							option_disabled = false;
 							return false;
 						} else {
 							option_disabled = true;
 						}
 					} else if ( _.contains(['select_cascade'], filter.form_type) ) {
-						if ( _.contains(
+						if (prvdr_fltr && _.contains(
 							prvdr_fltr[cascade_index], filter_option[filter.id][cascade_index][0]
 							) ) {
 							option_disabled = false;
@@ -225,7 +225,7 @@ angular.module('appFilters', [
 								if (this_item.form_type === 'select') {
 									provider.hide = !_.contains(prvdr_fltr, value);
 								} else if (this_item.form_type === 'select_cascade') {
-									provider.hide = !_.contains(prvdr_fltr[index], value);
+									provider.hide = !prvdr_fltr || !_.contains(prvdr_fltr[index], value);
 								} else {
 									return false;
 								}

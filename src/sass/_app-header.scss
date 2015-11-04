@@ -115,6 +115,9 @@
 			@media (min-width: $screen-lg-min) {
 				font-size: 1.75em;
 			}
+			@media (max-width: 767px) {
+				font-family: $font-family-display !important;
+			}
 		}
 		h2 {
 			@media (max-width: $screen-xs-max) {
@@ -647,6 +650,11 @@
 			margin-left: 2%;
 			border-width: 6px;
 			color: $emc-gray-light;
+		}
+		@media (max-width: 320px) {
+			.caret {
+				margin-left: 0;
+			}
 		}
 	}
 	.btn-group.open {

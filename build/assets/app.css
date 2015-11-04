@@ -2828,10 +2828,13 @@ button.close {
         .app-header .app-title h1 {
           font-size: 1.75em;
           margin-top: 25px;
-          font-family: "Architects Daughter"; } }
+          font-family: "FFMetaWebPro"; } }
       @media (min-width: 1200px) {
         .app-header .app-title h1 {
           font-size: 1.75em; } }
+      @media (max-width: 767px) {
+        .app-header .app-title h1 {
+          font-family: "FFMetaWebPro" !important; } }
     @media (max-width: 767px) {
       .app-header .app-title h2 {
         text-transform: uppercase; }
@@ -3247,6 +3250,9 @@ button.close {
       margin-left: 2%;
       border-width: 6px;
       color: #4E5052; }
+    @media (max-width: 320px) {
+      .filters .dropdown-toggle .caret {
+        margin-left: 0; } }
   .filters .btn-group.open .dropdown-title {
     opacity: 0.5;
     filter: alpha(opacity=50); }
@@ -3757,6 +3763,9 @@ button.close {
           filter: alpha(opacity=70); }
         .providers .providers-content > tr td + td {
           display: none; } }
+      @media (max-width: 320px) {
+        .providers .providers-content > tr td:first-child:after {
+          margin-right: -15px; } }
       .providers .providers-content > tr td > span {
         display: table-cell;
         height: 48px;
@@ -4121,3 +4130,42 @@ label.placeholder-ie {
   padding: 5px;
   /* Unfortunately selects don't respond well to padding. They need an explicit height. */
   height: 31px; }
+
+/*------------------------------------*\
+    $FONT FACE
+\*------------------------------------*/
+@font-face {
+  font-family: FFMetaWebPro;
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-normal.eot");
+  /* IE9+ Compat Modes */
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-normal.woff2") format("woff2"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-normal.woff") format("woff"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-normal.ttf") format("truetype"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-normal.svg#wf") format("svg");
+  /* Legacy iOS */
+  font-style: normal;
+  font-weight: normal; }
+
+@font-face {
+  font-family: FFMetaWebProLight;
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-light.eot");
+  /* IE9+ Compat Modes */
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-light.woff2") format("woff2"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-light.woff") format("woff"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-light.ttf") format("truetype"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-light.svg#wf") format("svg");
+  /* Legacy iOS */
+  font-style: normal;
+  font-weight: normal; }
+
+@font-face {
+  font-family: FFMetaWebProMedium;
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-medium.eot");
+  /* IE9+ Compat Modes */
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-medium.woff2") format("woff2"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-medium.woff") format("woff"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-medium.ttf") format("truetype"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-medium.svg#wf") format("svg");
+  /* Legacy iOS */
+  font-style: normal;
+  font-weight: normal; }
+
+@font-face {
+  font-family: FFMetaWebProBold;
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-bold.eot");
+  /* IE9+ Compat Modes */
+  src: url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-bold.woff2") format("woff2"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-bold.woff") format("woff"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-bold.ttf") format("truetype"), url("/etc/designs/uwaem/assets/fonts/ff-meta-web-pro/ff-meta-web-pro-bold.svg#wf") format("svg");
+  /* Legacy iOS */
+  font-style: normal;
+  font-weight: normal; }

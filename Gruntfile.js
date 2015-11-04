@@ -197,7 +197,7 @@ module.exports = function ( grunt ) {
 					'<%= build_dir %>/assets/app.css': '<%= app_files.sass %>'
 				},
 				options: {
-					outputStyle: 'compressed'
+					/*outputStyle: 'compressed'*/
 				}
 			}
 		},
@@ -467,7 +467,7 @@ module.exports = function ( grunt ) {
 	 * Gets the app ready for deployment
 	 */
 	grunt.registerTask( 'compile', [
-		'sass:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
+		'sass:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', /*'uglify',*/ 'index:compile'
 	]);
 
 	/**

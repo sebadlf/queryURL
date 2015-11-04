@@ -1,0 +1,28 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3087830, 2015-09-08T11:50:26-0400
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: FF Meta Web Pro Thin by FontFont
+ * URL: http://www.myfonts.com/fonts/fontfont/ff-meta/pro-thin/
+ * Copyright: 2009 Erik Spiekermann published by FSI FontShop International GmbH
+ * Licensed pageviews: 2,000,000
+ * 
+ * 
+ * License: http://www.myfonts.com/viewlicense?type=web&buildid=3087830
+ * 
+ * © 2015 MyFonts Inc
+*/
+
+
+@font-face {font-family: 'FFMetaWebProThin';src: url('ff-meta-web-pro-thin.eot');src: url('ff-meta-web-pro-thin.eot?#iefix') format('embedded-opentype'),url('ff-meta-web-pro-thin.woff2') format('woff2'),url('ff-meta-web-pro-thin.woff') format('woff'),url('ff-meta-web-pro-thin.ttf') format('truetype'),url('ff-meta-web-pro-thin.svg#wf') format('svg');}
+
+.font-meta-thin { font-family: 'FFMetaWebProThin'; }
+
+
+

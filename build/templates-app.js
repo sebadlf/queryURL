@@ -269,7 +269,8 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "			<thead class=\"providers-header\">\n" +
     "				<tr>\n" +
     "					<th ng-repeat=\"column in data.labels.main.columns\" class=\"providers-col-{{$index + 1}}\"\n" +
-    "						ng-class=\"{'sort-by': column.sort_by}\">\n" +
+    "						ng-class=\"{'sort-by': column.sort_by}\"\n" +
+    "						ng-hide=\"column.hideOnSafari\">\n" +
     "						<a ng-click=\"changeSort($index)\">{{column.title}} <span class=\"caret\"></span></a>\n" +
     "					</th>\n" +
     "				</tr>\n" +
