@@ -511,6 +511,8 @@ updateLocationURL(cascade_values,this.item,this.option);
 		var column    = _.find($scope.data.labels.main.columns, {'sort_by': true});
 		var sort_keys = [];
 
+		$scope.generateFocusPartnerAttribute();
+
 		if (column.title === 'Cloud Service Provider Name') {
 			sort_keys = ['+name'];
 		} else if (column.title === 'Tier') {
@@ -532,9 +534,28 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 		var sort_keys = ['+tier_id', '-focus_partner', '+name'];
 
+		$scope.generateFocusPartnerAttribute();
+
+		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
+	};
+
+	/**************************************************************************************************/
+	// Author: Globant
+	// Date: 11/03/2015
+	// Add focus_partner attribute that will be used as a sort criteria
+	/**************************************************************************************************/
+	$scope.generateFocusPartnerAttribute = function(){
 		$scope.data.filtered.main.map(function (provider) {
 
-			var providerHasFocusPartner = !!_.find(_.keys(provider.filters.service_offering), function(service_offering_key){
+			var keys = _.keys(provider.filters.service_offering);
+
+			if ($scope.data.selected.filters.service_offering && $scope.data.selected.filters.service_offering.length){
+				keys = _.filter(keys, function(key){
+					return key === $scope.data.selected.filters.service_offering[0];
+				});
+			}
+
+			var providerHasFocusPartner = !!_.find(keys, function(service_offering_key){
 
 				var service_offering_array = provider.filters.service_offering[service_offering_key];
 
@@ -554,8 +575,6 @@ updateLocationURL(cascade_values,this.item,this.option);
 			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
 
 		});
-
-		$scope.data.filtered.main = $filter('orderBy')($scope.data.filtered.main, sort_keys);
 	};
 
 	$scope.toggleDetail = function(provider_id) {
