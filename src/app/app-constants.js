@@ -8,8 +8,12 @@ angular.module('mConfiguration', [])
   .constant('configuration', {
     environment:[
       {
-      'environment':'dev1',
-        'url': 'http://emc.dev.bluelevel.co.uk/Services/ServiceProviders.asmx'
+      'environment':'dev',
+        'url': 'http://cspappdev01/Services/ServiceProviders.asmx'
+      },
+      {
+      'environment':'test',
+        'url': 'https://cspdbtst.emc.com/Services/ServiceProviders.asmx'
       },
       {
       'environment':'production',
