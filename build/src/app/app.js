@@ -47,8 +47,8 @@ angular.module('emc_service_providers', [
 .run(function() {
 
 })
-.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope','MockSrvApi',
-	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope, MockSrvApi) {
+.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope','MockSrvApi','configuration',
+	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope, MockSrvApi, configuration) {
 
 
 
@@ -1127,10 +1127,13 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	function refresh(){
 
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
+	
+	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
+	//$scope.data.$promise.then(function(response) {
+	//$scope.data = getResource.setEnvironment($location.search().env);
+	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
-	//getResource.setEnvironment($location.search().env);
-	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
@@ -1182,6 +1185,8 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 			//updateCheckboxSstatus();
 		});
 
+	//});
+	
 	});
 });
 	}
@@ -1243,7 +1248,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Date: 02/07/2015
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
-refresh();
+	refresh();
 
 }]);
 

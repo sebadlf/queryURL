@@ -6,6 +6,7 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q, configura
     var deferred = $q.defer();
 
     //Adapted from app-resource.js
+    /*
     var url;
 
     (function getUrl() {
@@ -25,11 +26,11 @@ angular.module('appFilters').service('MockSrvApi', function($http, $q, configura
 
       url = url[0].url;
       console.log(url);
-    })();
+    })();*/
 
     $http({
       method: 'GET',
-      url: url
+      url: 'src/blue-level-response.json'
     })
     .success(
       function(response) {
