@@ -577,7 +577,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
 
 					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
-
+						if (focus_partner_value.toLowerCase() === 'yes' ){
+							//console.log('Service_Offering: ',service_offering_key+'  Provider: '+provider.name);
+						}
 						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
 					});
 

@@ -76,6 +76,7 @@ angular.module('appFilters', [
 		};
 
 		var cascadeFilterOption = function(option_index, cascade) {
+			console.log('entro cascade filter option');
 			var set_filter_option             = _.zipObject([this_filter.id], []);
 			set_filter_option[this_filter.id] = [];
 			for (var i = 0; i < this_filter.options.length; i++) {
@@ -223,7 +224,15 @@ angular.module('appFilters', [
 						} else {
 							_(item).forOwn(function(value, index) {
 								if (this_item.form_type === 'select') {
-									provider.hide = !_.contains(prvdr_fltr, value);
+									if ( selected.filters.contract_type !== null ){
+										if ( selected.filters.contract_type[0] ==='commit' ||  selected.filters.contract_type[0] ==='payg'){
+											provider.hide = ! ( _.contains(prvdr_fltr, value) || _.contains(prvdr_fltr,'both') );
+										}
+										else
+										{provider.hide = !_.contains(prvdr_fltr, value);}
+									}
+									else
+										{provider.hide = !_.contains(prvdr_fltr, value);}
 								} else if (this_item.form_type === 'select_cascade') {
 									provider.hide = !prvdr_fltr || !_.contains(prvdr_fltr[index], value);
 								} else {
