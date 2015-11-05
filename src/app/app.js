@@ -1223,6 +1223,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	_(response.filters).forEach(function(filter,filter_index){
         if (filter.parent !== null){
             filter.parent =null;
+            filter.isSecondary = true;
         }
         if (filter.parent_display !== null){
             filter.parent_display = null;

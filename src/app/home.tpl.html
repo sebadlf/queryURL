@@ -58,7 +58,7 @@
 
 	<section id="filters" class="filters" ui-scrollfix="-90">
 		<tabset justified="true" class="filters-primary">
-			<tab ng-repeat="item in data.filtered.filters" ng-if="!item.parent_display"
+			<tab ng-repeat="item in data.filtered.filters" ng-if="!item.isSecondary"
 				heading="{{item.title}}" active="item.active" id="filter-{{item.id}}"
 				class="parent-{{item.has_children}} {{item.has_selected}}" ng-style="item.css"
 				hm-panmove="slideFilters($event)" hm-panend="slideFilters($event)"
@@ -140,8 +140,8 @@
 			</tab>
 		</tabset>
 
-		<tabset justified="true" class="filters-secondary" ng-show="data.selected.filter_primary">
-			<tab ng-repeat="item in data.filtered.filters" ng-if="item.parent_display"
+		<tabset justified="true" class="filters-secondary">
+			<tab ng-repeat="item in data.filtered.filters" ng-if="item.isSecondary"
 				heading="{{item.title}}" active="item.active" id="filter-{{item.id}}"
 				class="{{item.has_selected}}" ng-style="item.css"
 				hm-panmove="slideFilters($event)" hm-panend="slideFilters($event)"
