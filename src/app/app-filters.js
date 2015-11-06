@@ -224,7 +224,7 @@ angular.module('appFilters', [
 						} else {
 							_(item).forOwn(function(value, index) {
 								if (this_item.form_type === 'select') {
-									if ( selected.filters.contract_type !== null ){
+									if ( selected.filters.contract_type !== undefined ){
 										if ( selected.filters.contract_type[0] ==='commit' ||  selected.filters.contract_type[0] ==='payg'){
 											provider.hide = ! ( _.contains(prvdr_fltr, value) || _.contains(prvdr_fltr,'both') );
 										}
