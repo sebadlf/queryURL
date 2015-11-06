@@ -577,7 +577,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
 
 					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
-
+						if (focus_partner_value.toLowerCase() === 'yes' ){
+							//console.log('Service_Offering: ',service_offering_key+'  Provider: '+provider.name);
+						}
 						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
 					});
 
@@ -1150,9 +1152,9 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	//$scope.data = getResource.setEnvironment($location.search().env);
-	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
+	//MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
-	//$scope.data.$promise.then(function(response) {
+	$scope.data.$promise.then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
