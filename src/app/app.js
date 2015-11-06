@@ -723,7 +723,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 						'<th><h5>' + labels.titles.offerings + '</h5></th>' +
 						'<th><h5>' + labels.titles.products + '</h5></th>' +
 						'</tr></thead><tbody>';
-					_(selected.filters[labels.keys.services]).forEach(function(val, key) {
+					_(selected.filters[labels.keys.services + '_original']).forEach(function(val, key) {
 						var service       = _.find(services.options, {'id': key});
 						var product_ids   = _.uniq( _.flatten( _.pluck(val, labels.keys.products) ) );
 						var product_names = [];
@@ -1225,17 +1225,23 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	_(response.filters).forEach(function(filter,filter_index){
         if (filter.parent !== null){
             filter.parent =null;
+            filter.isSecondary = true;
         }
         if (filter.parent_display !== null){
             filter.parent_display = null;
         }
     });
 
+	_(response.providers).forEach(function(provider) {
+        provider.filters.service_offering_original = JSON.parse(JSON.stringify(provider.filters.service_offering));
+	});
+
     _(secondaryFilters).forEach(function(filter, filter_index) {
       _(response.providers).forEach(function(provider, provider_index) {
         //console.log(provider);
         var emc_attributes = null;
         var service_offering = provider.filters.service_offering;
+
         for(var propertyName in service_offering) {
            //console.log(service_offering[propertyName]);
            var obj = service_offering[propertyName];
