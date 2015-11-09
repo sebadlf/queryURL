@@ -34,9 +34,9 @@ angular.module('appFilters', [
 
 				if ( _.isNull(filter.parent) ) {
 					if (filter.has_children) {
-						prvdr_fltr = _.keys(provider.filters[filter.id]);
+						prvdr_fltr = _.keys(provider.filters_original[filter.id]);
 					} else {
-						prvdr_fltr = provider.filters[filter.id];
+						prvdr_fltr = provider.filters_original[filter.id];
 					}
 
 					if ( _.contains(['select', 'checkbox'], filter.form_type) ) {
@@ -57,12 +57,12 @@ angular.module('appFilters', [
 						}
 					}
 				} else {
-					if ( _.isUndefined(selected.filters[filter.parent]) ) {
+					if ( _.isUndefined(selected.filters_original[filter.parent]) ) {
 						option_disabled = false;
 						return false;
 					}
 
-					prvdr_fltr = provider.filters[filter.parent][selected.filters[filter.parent][0]];
+					prvdr_fltr = provider.filters_original[filter.parent][selected.filters_original[filter.parent][0]];
 					if ( _.isEmpty( _.where(prvdr_fltr, filter_option) ) ) {
 						option_disabled = true;
 					} else {
@@ -95,7 +95,7 @@ angular.module('appFilters', [
 				_.where(filters, {parent: this_filter.parent}), 'id'
 			), this_filter.id);
 			if ( !_.isEmpty(siblings) ) {
-				_(selected.filters).forOwn(function(value, key) {
+				_(selected.filters_original).forOwn(function(value, key) {
 					var this_sibling = _.find(filters, {'id': key});
 					if ( _.contains(siblings, key) ) {
 						if (this_sibling.form_type === 'select_cascade') {
@@ -210,10 +210,10 @@ angular.module('appFilters', [
 					var item_children, prvdr_fltr;
 
 					if (_.isNull(this_item.parent) && this_item.has_children) {
-						prvdr_fltr    = _.keys(provider.filters[group]);
+						prvdr_fltr    = _.keys(provider.filters_original[group]);
 						item_children = _.pluck(_.where($scope.data.filters, {parent: group}), 'id');
 					} else if ( _.isNull(this_item.parent) ) {
-						prvdr_fltr    = provider.filters[group];
+						prvdr_fltr    = provider.filters_original[group];
 					} else {
 						return;
 					}
@@ -259,7 +259,7 @@ angular.module('appFilters', [
 
 						if ( !_.isEmpty(selected_children) ) {
 							provider.hide = _.isEmpty(
-								_.where(_.values(provider.filters[group][item]), selected_children)
+								_.where(_.values(provider.filters_original[group][item]), selected_children)
 							);
 						}
 					}
