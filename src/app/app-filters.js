@@ -37,6 +37,10 @@ angular.module('appFilters', [
 						prvdr_fltr = _.keys(provider.filters_original[filter.id]);
 					} else {
 						prvdr_fltr = provider.filters_original[filter.id];
+
+						if(!prvdr_fltr){
+							prvdr_fltr = provider.filters_original.service_offering[selected.filters.service_offering[0]][0][filter.id];
+						}
 					}
 
 					if ( _.contains(['select', 'checkbox'], filter.form_type) ) {
@@ -210,10 +214,10 @@ angular.module('appFilters', [
 					var item_children, prvdr_fltr;
 
 					if (_.isNull(this_item.parent) && this_item.has_children) {
-						prvdr_fltr    = _.keys(provider.filters_original[group]);
+						prvdr_fltr    = _.keys(provider.filters[group]);
 						item_children = _.pluck(_.where($scope.data.filters, {parent: group}), 'id');
 					} else if ( _.isNull(this_item.parent) ) {
-						prvdr_fltr    = provider.filters_original[group];
+						prvdr_fltr    = provider.filters[group];
 					} else {
 						return;
 					}
@@ -259,7 +263,7 @@ angular.module('appFilters', [
 
 						if ( !_.isEmpty(selected_children) ) {
 							provider.hide = _.isEmpty(
-								_.where(_.values(provider.filters_original[group][item]), selected_children)
+								_.where(_.values(provider.filters[group][item]), selected_children)
 							);
 						}
 					}
