@@ -1217,7 +1217,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Date: 02/07/2015
 // Secondary Filters
 /**************************************************************************************************/
-  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
+  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location','contract_type'];
   //var secondaryFilters = ['emc_product'];
   function setSecondaryFilters(response){
 	var deferred = $q.defer();

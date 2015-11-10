@@ -723,7 +723,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 						'<th><h5>' + labels.titles.offerings + '</h5></th>' +
 						'<th><h5>' + labels.titles.products + '</h5></th>' +
 						'</tr></thead><tbody>';
-					_(selected.filters[labels.keys.services]).forEach(function(val, key) {
+					_(selected['filters_original'][labels.keys.services]).forEach(function(val, key) {
 						var service       = _.find(services.options, {'id': key});
 						var product_ids   = _.uniq( _.flatten( _.pluck(val, labels.keys.products) ) );
 						var product_names = [];
@@ -1148,7 +1148,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	function refresh(){
 
 	/****** CHANGE THE SOURCE: mock or real BE  ********/
-	
+
 	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	//$scope.data = getResource.setEnvironment($location.search().env);
@@ -1207,7 +1207,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 		});
 
 	//});
-	
+
 	});
 });
 	}
@@ -1217,7 +1217,7 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 // Date: 02/07/2015
 // Secondary Filters
 /**************************************************************************************************/
-  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location'];
+  var secondaryFilters = ['emc_product','service_type','geographical','public_sector','credit_card_swipe','datacenter_location','contract_type'];
   //var secondaryFilters = ['emc_product'];
   function setSecondaryFilters(response){
 	var deferred = $q.defer();
@@ -1225,17 +1225,23 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	_(response.filters).forEach(function(filter,filter_index){
         if (filter.parent !== null){
             filter.parent =null;
+            filter.isSecondary = true;
         }
         if (filter.parent_display !== null){
             filter.parent_display = null;
         }
     });
 
+	_(response.providers).forEach(function(provider) {
+        provider.filters_original = JSON.parse(JSON.stringify(provider.filters));
+	});
+
     _(secondaryFilters).forEach(function(filter, filter_index) {
       _(response.providers).forEach(function(provider, provider_index) {
         //console.log(provider);
         var emc_attributes = null;
         var service_offering = provider.filters.service_offering;
+
         for(var propertyName in service_offering) {
            //console.log(service_offering[propertyName]);
            var obj = service_offering[propertyName];
@@ -1259,6 +1265,25 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
         }
       });
     });
+
+	_(response.providers).forEach(function(provider) {
+		var tempGeographical = [];
+		var tempDatacenterLocation = [];
+
+		_.forEach(provider.filters_original.service_offering, function(service_offering){
+			_.forEach(service_offering, function(service_offering_element){
+				tempGeographical.push(service_offering_element.geographical);
+				tempDatacenterLocation.push(service_offering_element.datacenter_location);
+			});
+		});
+
+		provider.filters.geographical = tempGeographical;
+		provider.filters.datacenter_location = tempDatacenterLocation;
+		provider.filters.cloud_hq_location = [provider.filters.cloud_hq_location];
+	});
+
+
+
 	deferred.resolve(response);
     return deferred.promise;
   }

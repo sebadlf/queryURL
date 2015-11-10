@@ -9,7 +9,7 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "	</div>\n" +
     "</header>\n" +
     "\n" +
-    "<div class=\"app-nav\" ng-class=\"{'is-secondary-open': data.selected.filter_primary,\n" +
+    "<div class=\"app-nav\" ng-class=\"{'is-secondary-open': true,\n" +
     "	'xs-nav-open': data.selected.xs_nav_open, 'xs-search-open': data.selected.xs_search_open,\n" +
     "	'xs-filters-open': data.selected.xs_filters_open}\" ui-scrollfix=\"-40\">\n" +
     "	<section class=\"app-header\" data-ng-init=\"init()\">\n" +
@@ -62,7 +62,7 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "\n" +
     "	<section id=\"filters\" class=\"filters\" ui-scrollfix=\"-90\">\n" +
     "		<tabset justified=\"true\" class=\"filters-primary\">\n" +
-    "			<tab ng-repeat=\"item in data.filtered.filters\" ng-if=\"!item.parent_display\"\n" +
+    "			<tab ng-repeat=\"item in data.filtered.filters\" ng-if=\"!item.isSecondary\"\n" +
     "				heading=\"{{item.title}}\" active=\"item.active\" id=\"filter-{{item.id}}\"\n" +
     "				class=\"parent-{{item.has_children}} {{item.has_selected}}\" ng-style=\"item.css\"\n" +
     "				hm-panmove=\"slideFilters($event)\" hm-panend=\"slideFilters($event)\"\n" +
@@ -144,8 +144,8 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "			</tab>\n" +
     "		</tabset>\n" +
     "\n" +
-    "		<tabset justified=\"true\" class=\"filters-secondary\" ng-show=\"data.selected.filter_primary\">\n" +
-    "			<tab ng-repeat=\"item in data.filtered.filters\" ng-if=\"item.parent_display\"\n" +
+    "		<tabset justified=\"true\" class=\"filters-secondary\">\n" +
+    "			<tab ng-repeat=\"item in data.filtered.filters\" ng-if=\"item.isSecondary\"\n" +
     "				heading=\"{{item.title}}\" active=\"item.active\" id=\"filter-{{item.id}}\"\n" +
     "				class=\"{{item.has_selected}}\" ng-style=\"item.css\"\n" +
     "				hm-panmove=\"slideFilters($event)\" hm-panend=\"slideFilters($event)\"\n" +
