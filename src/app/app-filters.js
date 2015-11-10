@@ -38,8 +38,27 @@ angular.module('appFilters', [
 					} else {
 						prvdr_fltr = provider.filters_original[filter.id];
 
+						//Cloud HQ Location
+						if (prvdr_fltr && _.contains(['select_cascade'], filter.form_type)){
+							prvdr_fltr = [prvdr_fltr];
+						}
+
 						if(!prvdr_fltr){
-							prvdr_fltr = provider.filters_original.service_offering[selected.filters.service_offering[0]][0][filter.id];
+							if (selected.filters.service_offering && selected.filters.service_offering.length){
+								prvdr_fltr = [];
+
+								_.forEach(provider.filters_original.service_offering[selected.filters.service_offering[0]], function(service_offering_element){
+									if (prvdr_fltr && _.contains(['select_cascade'], filter.form_type)){
+										prvdr_fltr = [prvdr_fltr];
+									}
+
+									prvdr_fltr.push(service_offering_element[filter.id][0]);
+								});
+
+								//prvdr_fltr = provider.filters_original.service_offering[selected.filters.service_offering[0]][0][filter.id];
+							} else {
+								prvdr_fltr = provider.filters[filter.id];
+							}
 						}
 					}
 
@@ -51,9 +70,14 @@ angular.module('appFilters', [
 							option_disabled = true;
 						}
 					} else if ( _.contains(['select_cascade'], filter.form_type) ) {
-						if (prvdr_fltr && _.contains(
-							prvdr_fltr[cascade_index], filter_option[filter.id][cascade_index][0]
-							) ) {
+						if (prvdr_fltr &&
+								_.find(prvdr_fltr, function(prvdr_fltr_element){
+									return _.contains(
+										prvdr_fltr_element[cascade_index], filter_option[filter.id][cascade_index][0]
+									);
+								})
+
+							) {
 							option_disabled = false;
 							return false;
 						} else {
@@ -238,7 +262,9 @@ angular.module('appFilters', [
 									else
 										{provider.hide = !_.contains(prvdr_fltr, value);}
 								} else if (this_item.form_type === 'select_cascade') {
-									provider.hide = !prvdr_fltr || !_.contains(prvdr_fltr[index], value);
+									provider.hide = !prvdr_fltr || !_.find(prvdr_fltr,function(prvdr_fltr_element){
+																		return _.contains(prvdr_fltr_element[index], value);
+																	});
 								} else {
 									return false;
 								}

@@ -1265,6 +1265,25 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
         }
       });
     });
+
+	_(response.providers).forEach(function(provider) {
+		var tempGeographical = [];
+		var tempDatacenterLocation = [];
+
+		_.forEach(provider.filters_original.service_offering, function(service_offering){
+			_.forEach(service_offering, function(service_offering_element){
+				tempGeographical.push(service_offering_element.geographical);
+				tempDatacenterLocation.push(service_offering_element.datacenter_location);
+			});
+		});
+
+		provider.filters.geographical = tempGeographical;
+		provider.filters.datacenter_location = tempDatacenterLocation;
+		provider.filters.cloud_hq_location = [provider.filters.cloud_hq_location];
+	});
+
+
+
 	deferred.resolve(response);
     return deferred.promise;
   }
