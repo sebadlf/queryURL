@@ -1170,9 +1170,9 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	//$scope.data = getResource.setEnvironment($location.search().env);
-	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
+	//MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
-	//$scope.data.$promise.then(function(response) {
+	$scope.data.$promise.then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
