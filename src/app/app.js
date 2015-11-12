@@ -560,36 +560,54 @@ updateLocationURL(cascade_values,this.item,this.option);
 	// Add focus_partner attribute that will be used as a sort criteria
 	/**************************************************************************************************/
 	$scope.generateFocusPartnerAttribute = function(){
-		$scope.data.filtered.main.map(function (provider) {
+		function applyCriteria (filterFlatElement, criteria) {
+			var result = true;
 
-			var keys = _.keys(provider.filters.service_offering);
-
-			if ($scope.data.selected.filters.service_offering && $scope.data.selected.filters.service_offering.length){
-				keys = _.filter(keys, function(key){
-					return key === $scope.data.selected.filters.service_offering[0];
-				});
+			if (!filterFlatElement[criteria.key]){
+				result = false;
+			} else {
+				if (criteria.type === 'select'){
+					result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
+				} else if (criteria.type === 'checkbox'){
+					result = _.intersection(filterFlatElement[criteria.key], criteria.value).length === criteria.value.length;
+				} else if (criteria.type === 'select_cascade'){
+					_.forEach(criteria.value, function(criteriaValue, index){
+						result = result && _.contains(filterFlatElement[criteria.key][index], criteriaValue);
+					});
+				} else {
+					result = false;
+				}
 			}
 
-			var providerHasFocusPartner = !!_.find(keys, function(service_offering_key){
+			return result;
+		}
 
-				var service_offering_array = provider.filters.service_offering[service_offering_key];
+		var criterias = [];
 
-				var serviceHasFocusPartner = !!_.find(service_offering_array, function(service_offering){
+		_.forEach($scope.data.selected.filters, function(filterValue, filterKey){
+			criterias.push({
+				key: filterKey,
+				value: filterValue,
+				type: _.find($scope.data.filters, {'id': filterKey}).form_type
+			});
+		});
 
-					var focusPartnerYes = !!_.find(service_offering.focus_partner, function(focus_partner_value){
-						if (focus_partner_value.toLowerCase() === 'yes' ){
-							//console.log('Service_Offering: ',service_offering_key+'  Provider: '+provider.name);
-						}
-						return focus_partner_value.toLowerCase() === 'yes' ? 1 : 0;
-					});
+		$scope.data.filtered.main.map(function (provider) {
+			provider.focus_partner = false;
 
-					return focusPartnerYes;
+			var matchedFilters = _.filter(provider.filters_flat, function(filterFlatElement){
+				return _.every(criterias, function(criteria){
+					return applyCriteria(filterFlatElement, criteria);
 				});
-
-				return serviceHasFocusPartner;
 			});
 
-			provider.focus_partner = providerHasFocusPartner ? 1 : 0;
+			if (matchedFilters && matchedFilters.length){
+				var hasFocusPartner = _.any(matchedFilters, function(matchedFilter){
+					return matchedFilter.focus_partner[0].toLowerCase() === 'yes';
+				});
+
+				provider.focus_partner = hasFocusPartner ? 1 : 0;
+			}
 
 		});
 	};
@@ -1152,9 +1170,9 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
 	//$scope.data.$promise.then(function(response) {
 	//$scope.data = getResource.setEnvironment($location.search().env);
-	//MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
+	MockSrvApi.getBlueLevelBE($location.search().env).then(function(response) {
 	//$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
-	$scope.data.$promise.then(function(response) {
+	//$scope.data.$promise.then(function(response) {
 		setSecondaryFilters(response).then(function(response){
 		$scope.data = response;
         console.log($scope.data);
@@ -1234,6 +1252,39 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 
 	_(response.providers).forEach(function(provider) {
         provider.filters_original = JSON.parse(JSON.stringify(provider.filters));
+	});
+
+	_(response.providers).forEach(function(provider) {
+		var filters = JSON.parse(JSON.stringify(provider.filters));
+
+		provider.filters_flat = [];
+
+		var mainKeys = _.omit(_.keys(provider.filters), 'service_offering');
+
+		var serviceOfferingKeys = _.keys(provider.filters.service_offering);
+
+		_.forEach(serviceOfferingKeys, function(serviceOfferingKey){
+
+			var serviceOfferingArray = provider.filters.service_offering[serviceOfferingKey];
+
+			_.forEach(serviceOfferingArray, function(serviceOfferingElement){
+				var filterFlatElement = {};
+
+				var secondaryKeys = _.keys(serviceOfferingElement);
+
+				_.forEach(mainKeys, function(mainKey){
+					filterFlatElement[mainKey] = provider.filters[mainKey];
+				});
+
+				filterFlatElement.service_offering = [serviceOfferingKey];
+
+				_.forEach(secondaryKeys, function(secondaryKey){
+					filterFlatElement[secondaryKey] = serviceOfferingElement[secondaryKey];
+				});
+
+				provider.filters_flat.push(filterFlatElement);
+			});
+		});
 	});
 
     _(secondaryFilters).forEach(function(filter, filter_index) {
