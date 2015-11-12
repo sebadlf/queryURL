@@ -184,6 +184,28 @@ angular.module('appFilters', [
  * @return {array}    providers Filtered list of providers.
  */
 .filter('applyFilters', ['$q', function($q) {
+	function applyCriteria (filterFlatElement, criteria) {
+		var result = true;
+
+		if (!filterFlatElement[criteria.key]){
+			result = false;
+		} else {
+			if (criteria.type === 'select'){
+				result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
+			} else if (criteria.type === 'checkbox'){
+				result = _.intersection(filterFlatElement[criteria.key], criteria.value).length === criteria.value.length;
+			} else if (criteria.type === 'select_cascade'){
+				_.forEach(criteria.value, function(criteriaValue, index){
+					result = result && _.contains(filterFlatElement[criteria.key][index], criteriaValue);
+				});
+			} else {
+				result = false;
+			}
+		}
+
+		return result;
+	}
+
 	return function($scope, action, filter_id) {
 		var providers      = $scope.data.providers;
 		var selected       = $scope.data.selected;
@@ -213,6 +235,7 @@ angular.module('appFilters', [
 			$scope.data.filtered.search = null;
 		}
 
+		/*
 		$q.when().then(function() {
 			_(providers).forEach(function(provider) {
 				if (action === 'reset') {
@@ -305,8 +328,59 @@ angular.module('appFilters', [
 					}
 				});
 			});
+		})
+		*/
+
+		$q.when().then(function() {
+			var criterias = [];
+
+			_.forEach($scope.data.selected.filters, function(filterValue, filterKey){
+				criterias.push({
+					key: filterKey,
+					value: filterValue,
+					type: _.find($scope.data.filters, {'id': filterKey}).form_type
+				});
+			});
+
+			_(providers).forEach(function(provider) {
+
+				if (action === 'reset') {
+					provider.hide        = false;
+					provider.use_filters = false;
+					return;
+				} else if (action === 'single') {
+					if (provider.id === selected.search.id) {
+						provider.hide        = false;
+						provider.use_filters = false;
+						$scope.toggleDetail(provider.id);
+					} else {
+						provider.hide = true;
+					}
+					return;
+				}
+
+				provider.use_filters = false;
+
+				var matchedFilters = _.filter(provider.filters_flat, function(filterFlatElement){
+					return _.every(criterias, function(criteria){
+						return applyCriteria(filterFlatElement, criteria);
+					});
+				});
+
+				if (matchedFilters && matchedFilters.length) {
+					provider.hide = false;
+				} else {
+					provider.hide = true;
+				}
+
+			});
 		}).then(function() {
-			counts.main = $scope.data.providers.length - filtered_count.main;
+			//counts.main = $scope.data.providers.length - filtered_count.main;
+
+			counts.main = _.filter(providers, function(provider){
+				return !provider.hide;
+			}).length;
+
 			_(counts.groups[0]).forEach(function(item, index) {
 				counts.groups[0][index] = counts.groups[1][index] - filtered_count.groups[index];
 			});
