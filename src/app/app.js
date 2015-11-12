@@ -603,7 +603,9 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 			if (matchedFilters && matchedFilters.length){
 				var hasFocusPartner = _.any(matchedFilters, function(matchedFilter){
-					return matchedFilter.focus_partner[0].toLowerCase() === 'yes';
+					return matchedFilter.focus_partner &&
+							matchedFilter.focus_partner.length &&
+							matchedFilter.focus_partner[0].toLowerCase() === 'yes';
 				});
 
 				provider.focus_partner = hasFocusPartner ? 1 : 0;
@@ -1263,28 +1265,38 @@ $scope.resetActiveCheckbox = function(filter_id, option_id){
 
 		var serviceOfferingKeys = _.keys(provider.filters.service_offering);
 
-		_.forEach(serviceOfferingKeys, function(serviceOfferingKey){
+		if (serviceOfferingKeys && serviceOfferingKeys.length) {
+			_.forEach(serviceOfferingKeys, function(serviceOfferingKey){
 
-			var serviceOfferingArray = provider.filters.service_offering[serviceOfferingKey];
+				var serviceOfferingArray = provider.filters.service_offering[serviceOfferingKey];
 
-			_.forEach(serviceOfferingArray, function(serviceOfferingElement){
-				var filterFlatElement = {};
+				_.forEach(serviceOfferingArray, function(serviceOfferingElement){
+					var filterFlatElement = {};
 
-				var secondaryKeys = _.keys(serviceOfferingElement);
+					var secondaryKeys = _.keys(serviceOfferingElement);
 
-				_.forEach(mainKeys, function(mainKey){
-					filterFlatElement[mainKey] = provider.filters[mainKey];
+					_.forEach(mainKeys, function(mainKey){
+						filterFlatElement[mainKey] = provider.filters[mainKey];
+					});
+
+					filterFlatElement.service_offering = [serviceOfferingKey];
+
+					_.forEach(secondaryKeys, function(secondaryKey){
+						filterFlatElement[secondaryKey] = serviceOfferingElement[secondaryKey];
+					});
+
+					provider.filters_flat.push(filterFlatElement);
 				});
-
-				filterFlatElement.service_offering = [serviceOfferingKey];
-
-				_.forEach(secondaryKeys, function(secondaryKey){
-					filterFlatElement[secondaryKey] = serviceOfferingElement[secondaryKey];
-				});
-
-				provider.filters_flat.push(filterFlatElement);
 			});
-		});
+		} else {
+			var filterFlatElement = {};
+
+			_.forEach(mainKeys, function(mainKey){
+				filterFlatElement[mainKey] = provider.filters[mainKey];
+			});
+
+			provider.filters_flat.push(filterFlatElement);
+		}
 	});
 
     _(secondaryFilters).forEach(function(filter, filter_index) {
