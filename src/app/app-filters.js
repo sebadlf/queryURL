@@ -1,3 +1,48 @@
+function matchCriteria (filterFlatElement, criteria) {
+	var result = true;
+
+	if (!filterFlatElement[criteria.key]){
+		result = false;
+	} else {
+		if (criteria.type === 'select'){
+			result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
+		} else if (criteria.type === 'checkbox'){
+			result = _.intersection(filterFlatElement[criteria.key], criteria.value).length === criteria.value.length;
+		} else if (criteria.type === 'select_cascade'){
+			_.forEach(criteria.value, function(criteriaValue, index){
+				result = result && _.contains(filterFlatElement[criteria.key][index], criteriaValue);
+			});
+		} else {
+			result = false;
+		}
+	}
+
+	return result;
+}
+
+function generateCriteria($scope){
+	var criterias = [];
+
+	_.forEach($scope.data.selected.filters, function(filterValue, filterKey){
+		criterias.push({
+			key: filterKey,
+			value: filterValue,
+			type: _.find($scope.data.filters, {'id': filterKey}).form_type
+		});
+	});
+
+	return criterias;
+}
+
+
+function applySelectedFilters(filters_flat, criterias){
+	return _.filter(filters_flat, function(filterFlatElement){
+		return _.every(criterias, function(criteria){
+			return matchCriteria(filterFlatElement, criteria);
+		});
+	});
+}
+
 /**
  * Application filters
  */
@@ -27,16 +72,23 @@ angular.module('appFilters', [
 			var prvdr_fltr;
 			var option_disabled = true;
 
+			var criterias = generateCriteria($scope);
+
+			criterias = _.reject(criterias, function(criteria) {
+				return criteria.key === filter.id;
+			});
+
 			_(providers).forEach(function(provider, provider_index) {
 				if (provider.hide && !provider.use_filters) {
 					return;
 				}
 
+				/*
 				if ( _.isNull(filter.parent) ) {
 					if (filter.has_children) {
-						prvdr_fltr = _.keys(provider.filters_original[filter.id]);
+						prvdr_fltr = _.keys(provider.filters_flat[filter.id]);
 					} else {
-						prvdr_fltr = provider.filters_original[filter.id];
+						prvdr_fltr = provider.filters_flat[filter.id];
 
 						//Cloud HQ Location
 						if (prvdr_fltr && _.contains(['select_cascade'], filter.form_type)){
@@ -47,7 +99,7 @@ angular.module('appFilters', [
 							if (selected.filters.service_offering && selected.filters.service_offering.length){
 								prvdr_fltr = [];
 
-								_.forEach(provider.filters_original.service_offering[selected.filters.service_offering[0]], function(service_offering_element){
+								_.forEach(provider.filters_flat.service_offering[selected.filters_flat.service_offering[0]], function(service_offering_element){
 									if (prvdr_fltr && _.contains(['select_cascade'], filter.form_type)){
 										prvdr_fltr = [prvdr_fltr];
 									}
@@ -55,11 +107,24 @@ angular.module('appFilters', [
 									prvdr_fltr.push(service_offering_element[filter.id][0]);
 								});
 
-								//prvdr_fltr = provider.filters_original.service_offering[selected.filters.service_offering[0]][0][filter.id];
+								//prvdr_fltr = provider.filters_flat.service_offering[selected.filters.service_offering[0]][0][filter.id];
 							} else {
-								prvdr_fltr = provider.filters[filter.id];
+								prvdr_fltr = provider.filters_flat[filter.id];
 							}
 						}
+					}
+				*/
+
+				if (true) {
+
+					prvdr_fltr = applySelectedFilters(provider.filters_flat, criterias);
+
+					prvdr_fltr = prvdr_fltr.map(function(filterItem){
+						return filterItem[filter.id];
+					});
+
+					if (filter.form_type !== 'select_cascade') {
+						prvdr_fltr = _.flatten(prvdr_fltr);
 					}
 
 					if ( _.contains(['select', 'checkbox'], filter.form_type) ) {
@@ -85,12 +150,12 @@ angular.module('appFilters', [
 						}
 					}
 				} else {
-					if ( _.isUndefined(selected.filters_original[filter.parent]) ) {
+					if ( _.isUndefined(selected.filters_flat[filter.parent]) ) {
 						option_disabled = false;
 						return false;
 					}
 
-					prvdr_fltr = provider.filters_original[filter.parent][selected.filters_original[filter.parent][0]];
+					prvdr_fltr = provider.filters_flat[filter.parent][selected.filters_flat[filter.parent][0]];
 					if ( _.isEmpty( _.where(prvdr_fltr, filter_option) ) ) {
 						option_disabled = true;
 					} else {
@@ -123,7 +188,7 @@ angular.module('appFilters', [
 				_.where(filters, {parent: this_filter.parent}), 'id'
 			), this_filter.id);
 			if ( !_.isEmpty(siblings) ) {
-				_(selected.filters_original).forOwn(function(value, key) {
+				_(selected.filters_flat).forOwn(function(value, key) {
 					var this_sibling = _.find(filters, {'id': key});
 					if ( _.contains(siblings, key) ) {
 						if (this_sibling.form_type === 'select_cascade') {
@@ -184,27 +249,7 @@ angular.module('appFilters', [
  * @return {array}    providers Filtered list of providers.
  */
 .filter('applyFilters', ['$q', function($q) {
-	function applyCriteria (filterFlatElement, criteria) {
-		var result = true;
 
-		if (!filterFlatElement[criteria.key]){
-			result = false;
-		} else {
-			if (criteria.type === 'select'){
-				result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
-			} else if (criteria.type === 'checkbox'){
-				result = _.intersection(filterFlatElement[criteria.key], criteria.value).length === criteria.value.length;
-			} else if (criteria.type === 'select_cascade'){
-				_.forEach(criteria.value, function(criteriaValue, index){
-					result = result && _.contains(filterFlatElement[criteria.key][index], criteriaValue);
-				});
-			} else {
-				result = false;
-			}
-		}
-
-		return result;
-	}
 
 	return function($scope, action, filter_id) {
 		var providers      = $scope.data.providers;
@@ -332,15 +377,7 @@ angular.module('appFilters', [
 		*/
 
 		$q.when().then(function() {
-			var criterias = [];
-
-			_.forEach($scope.data.selected.filters, function(filterValue, filterKey){
-				criterias.push({
-					key: filterKey,
-					value: filterValue,
-					type: _.find($scope.data.filters, {'id': filterKey}).form_type
-				});
-			});
+			var criterias = generateCriteria($scope);
 
 			_(providers).forEach(function(provider) {
 
@@ -361,11 +398,7 @@ angular.module('appFilters', [
 
 				provider.use_filters = false;
 
-				var matchedFilters = _.filter(provider.filters_flat, function(filterFlatElement){
-					return _.every(criterias, function(criteria){
-						return applyCriteria(filterFlatElement, criteria);
-					});
-				});
+				var matchedFilters = applySelectedFilters(provider.filters_flat, criterias);
 
 				if (matchedFilters && matchedFilters.length) {
 					provider.hide = false;
