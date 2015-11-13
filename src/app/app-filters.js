@@ -79,9 +79,6 @@ angular.module('appFilters', [
 			});
 
 			_(providers).forEach(function(provider, provider_index) {
-				if (provider.hide && !provider.use_filters) {
-					return;
-				}
 
 				/*
 				if ( _.isNull(filter.parent) ) {
