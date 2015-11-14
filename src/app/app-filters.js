@@ -3,6 +3,12 @@ function matchCriteria (filterFlatElement, criteria) {
 
 	if (!filterFlatElement[criteria.key]){
 		result = false;
+	} else if (criteria.key === 'contract_type') {
+		if (criteria.value && criteria.value.length && criteria.value[0] !== 'both'){
+			result = _.intersection(filterFlatElement[criteria.key], [criteria.value[0], 'both']).length > 0;
+		} else {
+			result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
+		}
 	} else {
 		if (criteria.type === 'select'){
 			result = _.contains(filterFlatElement[criteria.key], criteria.value[0]);
@@ -112,7 +118,7 @@ angular.module('appFilters', [
 					}
 				*/
 
-				if (true) {
+				/*if (true) {*/
 
 					prvdr_fltr = applySelectedFilters(provider.filters_flat, criterias);
 
@@ -134,8 +140,8 @@ angular.module('appFilters', [
 					} else if ( _.contains(['select_cascade'], filter.form_type) ) {
 						if (prvdr_fltr &&
 								_.find(prvdr_fltr, function(prvdr_fltr_element){
-									return _.contains(
-										prvdr_fltr_element[cascade_index], filter_option[filter.id][cascade_index][0]
+									return prvdr_fltr_element &&
+											_.contains(prvdr_fltr_element[cascade_index], filter_option[filter.id][cascade_index][0]
 									);
 								})
 
@@ -146,7 +152,8 @@ angular.module('appFilters', [
 							option_disabled = true;
 						}
 					}
-				} else {
+				/*
+				else {
 					if ( _.isUndefined(selected.filters_flat[filter.parent]) ) {
 						option_disabled = false;
 						return false;
@@ -160,6 +167,7 @@ angular.module('appFilters', [
 						return false;
 					}
 				}
+				*/
 			});
 
 			return option_disabled;
