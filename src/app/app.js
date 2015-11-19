@@ -649,9 +649,14 @@ updateLocationURL(cascade_values,this.item,this.option);
 										}
 									} else {
 
+										var filtersHeight = jQuery('.filters-selected').height();
+										if (filtersHeight > 50){
+											filtersHeight = filtersHeight + 28;
+										}
+
 										offset = -jQuery('#headerWrap').height() -
 												jQuery('.app-nav').height() -
-												jQuery('.filters-selected').height();
+												filtersHeight;
 									}
 								} else {
 									if ( $scope.isXSmall() ) {
@@ -669,8 +674,15 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 									} else {
 
+										var filtersHeight = jQuery('.filters-selected').height();
+										if (filtersHeight > 50){
+											offsetCorrection = 12;
+										} else {
+											offsetCorrection = 6;
+										}
+
 										offset = -jQuery('header').height() -
-												(jQuery('.app-nav').height() - 6) -
+												(jQuery('.app-nav').height() - offsetCorrection) -
 												jQuery('.filters-selected').height();
 
 									}
