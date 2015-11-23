@@ -628,7 +628,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 				}
 
 				var popover = angular.element(item).next();
-
+				var filtersHeight;
 				if ( angular.element(popover).hasClass('popover') ) {
 					if (!_.isUndefined(provider_id) && scope.provider.id === selected.id) {
 						if (scope.tt_isOpen) {
@@ -649,7 +649,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 										}
 									} else {
 
-										var filtersHeight = jQuery('.filters-selected').height();
+										filtersHeight = jQuery('.filters-selected').height();
 										if (filtersHeight > 50){
 											filtersHeight = filtersHeight + 28;
 										}
@@ -674,7 +674,7 @@ updateLocationURL(cascade_values,this.item,this.option);
 
 									} else {
 
-										var filtersHeight = jQuery('.filters-selected').height();
+										filtersHeight = jQuery('.filters-selected').height();
 										if (filtersHeight > 50){
 											offsetCorrection = 12;
 										} else {
