@@ -134,6 +134,9 @@ angular.module('appFilters', [
 						if (prvdr_fltr &&  _.contains(prvdr_fltr, filter_option[filter.id][0]) ) {
 							option_disabled = false;
 							return false;
+						} else if (filter.id === 'contract_type' && _.contains(prvdr_fltr, 'both')) {
+							option_disabled = false;
+							return false;
 						} else {
 							option_disabled = true;
 						}
