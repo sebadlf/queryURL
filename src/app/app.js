@@ -442,6 +442,14 @@ updateLocationURL(cascade_values,this.item,this.option);
 						_.assign(
 							selected.filters_options, _.zipObject([this_filter.id], [_.flatten(titles)])
 						);
+					} else if (refreshPage) {
+						if (!selected.filters_options[this_filter.id]){
+							selected.filters_options[this_filter.id] = {};
+						}
+
+						if (!selected.filters_options[this_filter.id][option]){
+							selected.filters_options[this_filter.id][option] = true;
+						}
 					}
 				}
 			});
