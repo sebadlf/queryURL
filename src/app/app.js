@@ -71,6 +71,10 @@ angular.module('emc_service_providers', [
 		} else if (action === 'defaultFilters') {
 			action = undefined;
 			useDefaultOrder = true;
+
+			$scope.data.filtered.search = null;
+		} else {
+			$scope.data.filtered.search = null;
 		}
 
 		$scope.data.filtered.main = $filter('applyFilters')($scope, action, filter_id);
